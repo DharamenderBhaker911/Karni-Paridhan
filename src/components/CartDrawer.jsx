@@ -19,6 +19,8 @@ function CartDrawer() {
   if (!cartOpen) return null;
 
   const itemCount = cartItems.reduce((n, i) => n + i.qty, 0);
+  const shipping = 0; // Free delivery
+  const total = subtotal + shipping;
 
   function handlePaymentSuccess() {
     clearCart();
@@ -116,18 +118,40 @@ function CartDrawer() {
         {/* Footer (only when items exist) */}
         {cartItems.length > 0 && (
           <div className="cart-footer">
-            <div className="cart-subtotal">
-              <span className="subtotal-label">Subtotal ({itemCount} items)</span>
-              <span className="subtotal-amount">{formatPrice(subtotal)}</span>
+            {/* Order Summary */}
+            <div className="order-summary">
+              <p className="order-summary-title">Order Summary</p>
+              <div className="order-summary-row">
+                <span>Subtotal ({itemCount} item{itemCount !== 1 ? "s" : ""})</span>
+                <span className="order-summary-val">{formatPrice(subtotal)}</span>
+              </div>
+              <div className="order-summary-row">
+                <span>Delivery</span>
+                <span className="order-summary-val order-free">FREE</span>
+              </div>
+              <div className="order-summary-divider" />
+              <div className="order-summary-row order-total-row">
+                <span className="order-total-label">Total Payable</span>
+                <span className="order-total-amount">{formatPrice(total)}</span>
+              </div>
+              <p className="order-tax-note">Inclusive of all taxes</p>
             </div>
-            <p className="subtotal-note">Inclusive of all taxes · Free delivery</p>
+
+            {/* Trust Badge */}
+            <div className="cart-trust-row">
+              <span>🔒 Secure Checkout</span>
+              <span className="dot-sep">·</span>
+              <span>📲 UPI / QR Pay</span>
+            </div>
+
+            {/* Checkout Button */}
             <button
               type="button"
               className="checkout-btn"
               onClick={() => setShowPayment(true)}
             >
-              <span className="upi-icon">📲</span>
-              Pay via UPI — {formatPrice(subtotal)}
+              <span>Proceed to Pay</span>
+              <span className="checkout-amount-chip">{formatPrice(total)}</span>
             </button>
           </div>
         )}
@@ -136,7 +160,7 @@ function CartDrawer() {
       {/* Payment Modal */}
       {showPayment && (
         <PaymentModal
-          subtotal={subtotal}
+          subtotal={total}
           onClose={() => setShowPayment(false)}
           onSuccess={handlePaymentSuccess}
         />

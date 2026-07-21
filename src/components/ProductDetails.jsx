@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { formatPrice } from "../utils/format";
 
 const FEATURES = [
@@ -12,10 +12,12 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [qty, setQty] = useState(1);
+  const [sizeError, setSizeError] = useState(false);
 
   // Touch swipe state
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const sizeRowRef = useRef(null);
 
   const gallery = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
   const activeImage = gallery[currentIndex] || product.image;
@@ -65,14 +67,34 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [gallery.length]);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  function triggerSizeError() {
+    setSizeError(true);
+    // Scroll size row into view on mobile
+    if (sizeRowRef.current) {
+      sizeRowRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    // Auto clear after animation
+    setTimeout(() => setSizeError(false), 700);
+  }
+
   function handleAdd() {
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      triggerSizeError();
+      return;
+    }
     onAdd({ ...product, selectedSize, qty });
     onClose();
   }
 
   function handleBuyNow() {
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
-      alert("Please select a size first!");
+      triggerSizeError();
       return;
     }
     onBuyNow({ ...product, selectedSize, qty });
@@ -89,7 +111,7 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
           ✕
         </button>
 
-        {/* Swipeable Modern Gallery */}
+        {/* ── Left: Image Gallery ── */}
         <div className="details-gallery">
           <div
             className="gallery-main swipeable-main"
@@ -127,13 +149,6 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
                 </button>
               </>
             )}
-
-            {/* Mobile Touch Swipe Cue */}
-            {gallery.length > 1 && (
-              <div className="swipe-hint-pill" aria-hidden="true">
-                👈 Swipe Left / Right 👉
-              </div>
-            )}
           </div>
 
           {/* Dots Indicator */}
@@ -167,12 +182,15 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
           </div>
         </div>
 
-        {/* Info & CTA Copy */}
+        {/* ── Right: Info & CTA ── */}
         <div className="details-copy">
-          <div>
+          {/* Category & Stock */}
+          <div className="details-top-row">
             <p className="eyebrow">{product.category}</p>
-            <h2 id="product-title" className="serif">{product.name}</h2>
+            <span className="in-stock-badge">✓ In Stock</span>
           </div>
+
+          <h2 id="product-title" className="serif details-title">{product.name}</h2>
 
           {/* Price */}
           <div className="details-price-row">
@@ -188,24 +206,27 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
           <p className="description">{product.details}</p>
 
           {/* Size Selector */}
-          <div>
+          <div ref={sizeRowRef}>
             <p className="size-label">
               Select Size
-              {selectedSize && <span style={{ color: "var(--wine)", marginLeft: "0.5rem" }}>{selectedSize}</span>}
+              {selectedSize && <span className="selected-size-display">{selectedSize}</span>}
             </p>
-            <div className="size-row">
+            <div className={`size-row ${sizeError ? "size-row-shake" : ""}`}>
               {product.sizes.map((size) => (
                 <button
                   key={size}
                   type="button"
                   className={`size-btn ${selectedSize === size ? "selected" : ""}`}
-                  onClick={() => setSelectedSize(size)}
+                  onClick={() => { setSelectedSize(size); setSizeError(false); }}
                   aria-pressed={selectedSize === size}
                 >
                   {size}
                 </button>
               ))}
             </div>
+            {sizeError && (
+              <p className="size-error-pill">⚠ Please select a size to continue</p>
+            )}
           </div>
 
           {/* Quantity Stepper */}
@@ -238,29 +259,31 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
           </ul>
 
           {/* CTA Actions */}
-          <div className="details-actions" style={{ display: "flex", gap: "0.8rem", marginTop: "1rem" }}>
+          <div className="details-actions">
             <button
               type="button"
-              className="btn-ghost"
-              style={{ flex: 1, padding: "1rem", fontSize: "0.9rem", borderRadius: "0.85rem", whiteSpace: "nowrap" }}
+              className="btn-ghost details-cta-btn"
               onClick={handleAdd}
             >
-              Add to Cart
+              🛍 Add to Cart
             </button>
             <button
               type="button"
-              className="btn-primary"
-              style={{ flex: 1.5, padding: "1rem", fontSize: "0.9rem", borderRadius: "0.85rem", whiteSpace: "nowrap" }}
+              className="btn-primary details-cta-btn"
               onClick={handleBuyNow}
             >
-              Buy Now
+              ⚡ Buy Now
             </button>
           </div>
-          {!selectedSize && (
-            <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", textAlign: "center", marginTop: "0.5rem" }}>
-              Please select a size above before buying
-            </p>
-          )}
+
+          {/* Delivery Note */}
+          <div className="details-delivery-note">
+            <span>🚚 Free delivery</span>
+            <span className="dot-sep">·</span>
+            <span>🔒 Secure payment</span>
+            <span className="dot-sep">·</span>
+            <span>↩ Easy returns</span>
+          </div>
         </div>
       </section>
     </div>
