@@ -166,21 +166,8 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
             </div>
           )}
 
-          {/* Thumbnails */}
-          <div className="thumb-row">
-            {gallery.map((img, idx) => (
-              <button
-                key={img}
-                type="button"
-                className={`thumb ${idx === currentIndex ? "active" : ""}`}
-                onClick={() => setCurrentIndex(idx)}
-                aria-label={`View image ${idx + 1} of ${product.name}`}
-              >
-                <img src={img} alt="" />
-              </button>
-            ))}
-          </div>
         </div>
+
 
         {/* ── Right: Info & CTA ── */}
         <div className="details-copy">
