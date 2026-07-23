@@ -11,12 +11,12 @@ const paytmLogo   = "https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_L
 const gpayLogo    = "https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg";
 const phonepeLogo = "https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg";
 
-// Steps: address → payment → success
+// Steps: address → payment → sending → success
 function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess }) {
-  const [step, setStep]         = useState("address");
+  const [step, setStep]          = useState("address");
   const [sameAsPhone, setSameAs] = useState(true);
-  const [formErrors, setErrors] = useState({});
-  const [form, setForm]         = useState({
+  const [formErrors, setErrors]  = useState({});
+  const [form, setForm]          = useState({
     name: "", phone: "", whatsapp: "",
     address: "", city: "", state: "", pincode: "",
   });
@@ -25,26 +25,37 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     () => "#KP" + Date.now().toString(36).toUpperCase().slice(-6)
   );
 
-  const qrRef       = useRef(null);
-  const payBodyRef  = useRef(null);
+  const qrRef      = useRef(null);
+  const payBodyRef = useRef(null);
 
-  const base  = subtotal;
-  const gst   = Math.round(base * GST_RATE);
-  const cgst  = Math.round(gst / 2);
-  const sgst  = gst - cgst;
-  const total = base + gst;
+  const base   = subtotal;
+  const gst    = Math.round(base * GST_RATE);
+  const cgst   = Math.round(gst / 2);
+  const sgst   = gst - cgst;
+  const total  = base + gst;
   const upiUrl = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${total.toFixed(2)}&tn=${orderId}`;
-  const waNum  = sameAsPhone ? form.phone : form.whatsapp;
 
-  // Auto-scroll down to QR section 1.5s after payment page loads
+  // Customer WhatsApp number
+  const customerWa = sameAsPhone ? form.phone : form.whatsapp;
+
+  // Auto-scroll to QR section after 1.5s on payment page
   useEffect(() => {
-    if (step === "payment" && payBodyRef.current) {
-      const timer = setTimeout(() => {
-        if (qrRef.current) {
-          qrRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+    if (step === "payment" && qrRef.current) {
+      const t = setTimeout(() => {
+        qrRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 1500);
-      return () => clearTimeout(timer);
+      return () => clearTimeout(t);
+    }
+  }, [step]);
+
+  // Auto-trigger WhatsApp to customer when "sending" step loads
+  useEffect(() => {
+    if (step === "sending") {
+      // Small delay so the UI renders first, then fire WhatsApp
+      const t = setTimeout(() => {
+        openCustomerWhatsApp();
+      }, 800);
+      return () => clearTimeout(t);
     }
   }, [step]);
 
@@ -60,20 +71,92 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     return `upi://pay?${p}`;
   }
 
+  // Build bill message (for customer)
+  function buildCustomerMsg() {
+    return encodeURIComponent(
+      `🎊 *Order Confirmed — Karni Paridhan*\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `📦 *Order ID:* ${orderId}\n` +
+      `👗 *Product:* ${productName || "—"}\n` +
+      `📐 *Size:* ${selectedSize || "—"}\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `💰 *YOUR BILL*\n` +
+      `Item Price : ₹${base.toFixed(2)}\n` +
+      `CGST (9%)  : ₹${cgst.toFixed(2)}\n` +
+      `SGST (9%)  : ₹${sgst.toFixed(2)}\n` +
+      `Delivery   : FREE 🚚\n` +
+      `*Total Paid: ₹${total.toFixed(2)}*\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `📍 *Delivery Address*\n` +
+      `${form.address}\n` +
+      `${form.city}, ${form.state} – ${form.pincode}\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `🚚 Expected: 5–7 business days\n` +
+      `Thank you for shopping with us! 🙏\n` +
+      `— Team Karni Paridhan`
+    );
+  }
+
+  // Build bill message (for shop)
+  function buildShopMsg() {
+    return encodeURIComponent(
+      `🛍️ *NEW ORDER — Karni Paridhan*\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `📦 *Order ID:* ${orderId}\n` +
+      `👗 *Product:* ${productName || "—"}\n` +
+      `📐 *Size:* ${selectedSize || "—"}\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `💰 *BILL*\n` +
+      `Item : ₹${base.toFixed(2)}\n` +
+      `GST  : ₹${gst.toFixed(2)}\n` +
+      `*Total: ₹${total.toFixed(2)}*\n` +
+      `UPI: ${UPI_ID}\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `📍 *ADDRESS*\n` +
+      `Name    : ${form.name}\n` +
+      `Phone   : ${form.phone}\n` +
+      `WhatsApp: 91${customerWa}\n` +
+      `Address : ${form.address}\n` +
+      `${form.city}, ${form.state} – ${form.pincode}`
+    );
+  }
+
+  function openCustomerWhatsApp() {
+    // Open WhatsApp to CUSTOMER with their order bill
+    const url = `https://wa.me/91${customerWa}?text=${buildCustomerMsg()}`;
+    window.open(url, "_blank");
+
+    // Also notify shop in same gesture context
+    setTimeout(() => {
+      window.open(`https://wa.me/${SHOP_WA}?text=${buildShopMsg()}`, "_blank");
+    }, 400);
+
+    // Move to success after a moment
+    setTimeout(() => {
+      setStep("success");
+      setTimeout(() => { onSuccess?.(); }, 3000);
+    }, 1200);
+  }
+
+  function handleUpiClick() {
+    // When user taps a UPI app → transition to "sending" step
+    // The "sending" useEffect will fire openCustomerWhatsApp automatically
+    setTimeout(() => setStep("sending"), 600);
+  }
+
   function downloadQR() {
     const svg = document.querySelector(".pm-qr-svg-el");
     if (!svg) return;
-    const svgData  = new XMLSerializer().serializeToString(svg);
-    const canvas   = document.createElement("canvas");
-    const size     = 300;
-    canvas.width   = size;
-    canvas.height  = size;
-    const ctx      = canvas.getContext("2d");
-    const img      = new Image();
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas  = document.createElement("canvas");
+    canvas.width  = 300;
+    canvas.height = 300;
+    const ctx     = canvas.getContext("2d");
+    const img     = new Image();
     img.onload = () => {
       ctx.fillStyle = "#fff";
-      ctx.fillRect(0, 0, size, size);
-      ctx.drawImage(img, 0, 0, size, size);
+      ctx.fillRect(0, 0, 300, 300);
+      ctx.drawImage(img, 0, 0, 300, 300);
       const a    = document.createElement("a");
       a.download = `KarniParidhan-QR-${orderId}.png`;
       a.href     = canvas.toDataURL("image/png");
@@ -89,13 +172,13 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
 
   function validate() {
     const e = {};
-    if (!form.name.trim())                                          e.name     = "Full name required";
-    if (!/^\d{10}$/.test(form.phone.trim()))                       e.phone    = "Valid 10-digit number required";
-    if (!sameAsPhone && !/^\d{10}$/.test(form.whatsapp.trim()))    e.whatsapp = "Valid 10-digit WhatsApp number";
-    if (!form.address.trim())                                       e.address  = "Address required";
-    if (!form.city.trim())                                          e.city     = "City required";
-    if (!form.state.trim())                                         e.state    = "State required";
-    if (!/^\d{6}$/.test(form.pincode.trim()))                      e.pincode  = "Valid 6-digit PIN required";
+    if (!form.name.trim())                                        e.name     = "Full name required";
+    if (!/^\d{10}$/.test(form.phone.trim()))                     e.phone    = "Valid 10-digit number required";
+    if (!sameAsPhone && !/^\d{10}$/.test(form.whatsapp.trim()))  e.whatsapp = "Valid 10-digit WhatsApp number";
+    if (!form.address.trim())                                     e.address  = "Address required";
+    if (!form.city.trim())                                        e.city     = "City required";
+    if (!form.state.trim())                                       e.state    = "State required";
+    if (!/^\d{6}$/.test(form.pincode.trim()))                    e.pincode  = "Valid 6-digit PIN required";
     return e;
   }
 
@@ -107,37 +190,7 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     setStep("payment");
   }
 
-  function sendWhatsApp() {
-    const msg = encodeURIComponent(
-      `🛍️ *NEW ORDER — Karni Paridhan*\n` +
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      `📦 *Order ID:* ${orderId}\n` +
-      `👗 *Product:* ${productName || "—"}\n` +
-      `📐 *Size:* ${selectedSize || "—"}\n` +
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      `💰 *BILL*\n` +
-      `Item Price : ₹${base.toFixed(2)}\n` +
-      `CGST (9%)  : ₹${cgst.toFixed(2)}\n` +
-      `SGST (9%)  : ₹${sgst.toFixed(2)}\n` +
-      `Delivery   : FREE\n` +
-      `*Total Paid: ₹${total.toFixed(2)}*\n` +
-      `UPI: ${UPI_ID}\n` +
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      `📍 *ADDRESS*\n` +
-      `Name    : ${form.name}\n` +
-      `Phone   : ${form.phone}\n` +
-      `WhatsApp: ${waNum}\n` +
-      `Address : ${form.address}\n` +
-      `${form.city}, ${form.state} – ${form.pincode}\n` +
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      `✅ Payment Done via UPI`
-    );
-    window.open(`https://wa.me/${SHOP_WA}?text=${msg}`, "_blank");
-    setStep("success");
-    setTimeout(() => { onSuccess(); onClose(); }, 5000);
-  }
-
-  /* ─── SUCCESS ─────────────────────────────────────── */
+  /* ── SUCCESS ───────────────────────────────────── */
   if (step === "success") {
     return (
       <div className="pm-overlay">
@@ -145,23 +198,40 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
           <div className="pm-success__icon">
             <svg viewBox="0 0 52 52">
               <circle className="pm-success__circle" cx="26" cy="26" r="24" fill="none" />
-              <path  className="pm-success__tick"   fill="none" d="M14 27l8 8 16-16" />
+              <path   className="pm-success__tick"   fill="none" d="M14 27l8 8 16-16" />
             </svg>
           </div>
           <h2 className="pm-success__title">Order Placed! 🎉</h2>
           <p  className="pm-success__id">{orderId}</p>
           <p  className="pm-success__msg">
-            Thank you, <strong>{form.name}</strong>! Your order details have been sent via WhatsApp.<br />
+            Thank you, <strong>{form.name}</strong>!<br />
+            Your bill has been sent to your WhatsApp.<br />
             Delivering to <strong>{form.city}, {form.state}</strong>.
           </p>
           <div className="pm-success__badge">{formatPrice(total)} Paid via UPI</div>
           <p className="pm-success__eta">📦 Expected delivery: 5–7 business days</p>
+          <button className="pm-success__close" onClick={onClose}>Close ✕</button>
         </div>
       </div>
     );
   }
 
-  /* ─── PAYMENT SCREEN ──────────────────────────────── */
+  /* ── SENDING (auto-fires WhatsApp, shows spinner) ── */
+  if (step === "sending") {
+    return (
+      <div className="pm-overlay">
+        <div className="pm-sending">
+          <div className="pm-sending__spinner" />
+          <h3 className="pm-sending__title">Processing your order…</h3>
+          <p  className="pm-sending__sub">Sending your bill to WhatsApp 📲</p>
+          <p  className="pm-sending__wa">+91 {customerWa}</p>
+          <p  className="pm-sending__note">Please allow WhatsApp to open</p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── PAYMENT SCREEN ─────────────────────────────── */
   if (step === "payment") {
     return (
       <div className="pm-overlay">
@@ -177,11 +247,14 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
             <span>🔒</span>
           </div>
 
-          {/* ── SECTION 1: Amount + GST Bill (visible first) ── */}
+          {/* SECTION 1: Amount + GST (visible first) */}
           <div className="pm-pay__bill-section">
             <p className="pm-pay__bill-eyebrow">Order Summary</p>
             {productName && (
-              <div className="pm-pay__bill-product">{productName} {selectedSize && <span className="pm-pay__size-pill">{selectedSize}</span>}</div>
+              <div className="pm-pay__bill-product">
+                {productName}
+                {selectedSize && <span className="pm-pay__size-pill">{selectedSize}</span>}
+              </div>
             )}
 
             <div className="pm-pay__amount-big">
@@ -190,21 +263,11 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
             </div>
 
             <div className="pm-pay__gst-breakdown">
-              <div className="pm-pay__gst-row">
-                <span>Item Price</span><span>₹{base.toFixed(2)}</span>
-              </div>
-              <div className="pm-pay__gst-row">
-                <span>CGST @ 9%</span><span>+₹{cgst.toFixed(2)}</span>
-              </div>
-              <div className="pm-pay__gst-row">
-                <span>SGST @ 9%</span><span>+₹{sgst.toFixed(2)}</span>
-              </div>
-              <div className="pm-pay__gst-row">
-                <span>Delivery</span><span className="pm-pay__free">FREE</span>
-              </div>
-              <div className="pm-pay__gst-total">
-                <span>Total Payable</span><span>₹{total.toFixed(2)}</span>
-              </div>
+              <div className="pm-pay__gst-row"><span>Item Price</span><span>₹{base.toFixed(2)}</span></div>
+              <div className="pm-pay__gst-row"><span>CGST @ 9%</span><span>+₹{cgst.toFixed(2)}</span></div>
+              <div className="pm-pay__gst-row"><span>SGST @ 9%</span><span>+₹{sgst.toFixed(2)}</span></div>
+              <div className="pm-pay__gst-row"><span>Delivery</span><span className="pm-pay__free">FREE</span></div>
+              <div className="pm-pay__gst-total"><span>Total Payable</span><span>₹{total.toFixed(2)}</span></div>
             </div>
 
             <div className="pm-pay__delivery-addr">
@@ -213,14 +276,18 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
               <button className="pm-pay__addr-change" onClick={() => setStep("address")}>Change</button>
             </div>
 
-            <p className="pm-pay__scroll-hint">↓ Scroll down to pay</p>
+            <div className="pm-pay__wa-notify">
+              <span>📲</span>
+              <span>Bill will be auto-sent to <strong>+91 {customerWa}</strong> after payment</span>
+            </div>
+
+            <p className="pm-pay__scroll-hint">↓ Scroll to pay</p>
           </div>
 
-          {/* ── SECTION 2: QR + Download + App Buttons ── */}
+          {/* SECTION 2: QR + App Buttons */}
           <div className="pm-pay__payment-section" ref={qrRef}>
             <p className="pm-pay__pay-eyebrow">Choose Payment Method</p>
 
-            {/* QR Code */}
             <div className="pm-pay__qr-block">
               <div className="pm-pay__qr-box">
                 <QRCodeSVG
@@ -234,107 +301,66 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
               </div>
               <p className="pm-pay__qr-upi">UPI: {UPI_ID}</p>
               <p className="pm-pay__qr-hint">Scan with any UPI app</p>
-              <button className="pm-pay__download-btn" onClick={downloadQR}>
-                ⬇ Download QR Code
-              </button>
+              <button className="pm-pay__download-btn" onClick={downloadQR}>⬇ Download QR</button>
             </div>
 
-            {/* Divider */}
-            <div className="pm-pay__or"><span>or pay via app</span></div>
+            <div className="pm-pay__or"><span>or open app directly</span></div>
 
-            {/* App Buttons */}
+            {/* UPI App Buttons — clicking auto-sends WhatsApp */}
             <div className="pm-pay__app-list">
-              <a href={upiLink("net.one97.paytm")} className="pm-pay__app-btn">
+              <a
+                href={upiLink("net.one97.paytm")}
+                className="pm-pay__app-btn"
+                onClick={handleUpiClick}
+              >
                 <img src={paytmLogo} alt="Paytm" className="pm-pay__app-logo" />
                 <span className="pm-pay__app-name">Paytm</span>
                 <span className="pm-pay__app-arrow">›</span>
               </a>
-              <a href={upiLink("com.google.android.apps.nbu.paisa.user")} className="pm-pay__app-btn">
+              <a
+                href={upiLink("com.google.android.apps.nbu.paisa.user")}
+                className="pm-pay__app-btn"
+                onClick={handleUpiClick}
+              >
                 <img src={gpayLogo} alt="Google Pay" className="pm-pay__app-logo" />
                 <span className="pm-pay__app-name">Google Pay</span>
                 <span className="pm-pay__app-arrow">›</span>
               </a>
-              <a href={upiLink("com.phonepe.app")} className="pm-pay__app-btn">
+              <a
+                href={upiLink("com.phonepe.app")}
+                className="pm-pay__app-btn"
+                onClick={handleUpiClick}
+              >
                 <img src={phonepeLogo} alt="PhonePe" className="pm-pay__app-logo" />
                 <span className="pm-pay__app-name">PhonePe</span>
                 <span className="pm-pay__app-arrow">›</span>
               </a>
             </div>
 
-            {/* WhatsApp confirm — after scrolling to the bottom */}
-            <div className="pm-pay__wa-block">
-              <p className="pm-pay__wa-title">✅ After Payment — Confirm Order</p>
-              <p className="pm-pay__wa-sub">Pay via UPI above, then tap below to send us your order details on WhatsApp</p>
-              <button className="pm-pay__wa-btn" onClick={sendWhatsApp}>
-                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                  <path d="M12 0C5.374 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.83L.057 23.117a.75.75 0 0 0 .93.93l5.29-1.467A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.816 9.816 0 0 1-5.032-1.387l-.36-.214-3.733 1.035 1.034-3.736-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/>
-                </svg>
-                Send Order on WhatsApp
-              </button>
+            <div className="pm-pay__auto-note">
+              <span>✅</span>
+              <span>After tapping any app above, your bill is automatically sent to your WhatsApp</span>
             </div>
 
-            <p className="pm-pay__footer">Order ID: {orderId} · All UPI apps accepted</p>
+            <p className="pm-pay__footer">Order ID: {orderId}</p>
           </div>
         </div>
       </div>
     );
   }
 
-  /* ─── ADDRESS FORM ────────────────────────────────── */
+  /* ── ADDRESS FORM ───────────────────────────────── */
   return (
     <div className="pm-overlay">
       <div className="pm-card pm-addr-card">
 
         <div className="pm-card__head">
           <button className="pm-card__back" onClick={onClose}>←</button>
-          <span className="pm-card__head-title">Delivery Address</span>
+          <span className="pm-card__head-title">📍 Delivery Address</span>
           <span className="pm-card__head-step">Step 1 / 2</span>
         </div>
 
-        <div className="pm-addr__body">
-
-          {/* Bill Sidebar */}
-          <div className="pm-addr__bill">
-            <p className="pm-bill__title">🧾 Order Summary</p>
-            {productName && (
-              <div className="pm-bill__row">
-                <span className="pm-bill__label">Product</span>
-                <span className="pm-bill__val pm-bill__product">{productName}</span>
-              </div>
-            )}
-            {selectedSize && (
-              <div className="pm-bill__row">
-                <span className="pm-bill__label">Size</span>
-                <span className="pm-bill__val"><span className="pm-bill__size">{selectedSize}</span></span>
-              </div>
-            )}
-            <div className="pm-bill__divider" />
-            <div className="pm-bill__row">
-              <span className="pm-bill__label">Item Price</span>
-              <span className="pm-bill__val">{formatPrice(base)}</span>
-            </div>
-            <div className="pm-bill__row">
-              <span className="pm-bill__label">CGST @ 9%</span>
-              <span className="pm-bill__val">+{formatPrice(cgst)}</span>
-            </div>
-            <div className="pm-bill__row">
-              <span className="pm-bill__label">SGST @ 9%</span>
-              <span className="pm-bill__val">+{formatPrice(sgst)}</span>
-            </div>
-            <div className="pm-bill__row">
-              <span className="pm-bill__label">Delivery</span>
-              <span className="pm-bill__val pm-bill__free">FREE</span>
-            </div>
-            <div className="pm-bill__divider pm-bill__divider--thick" />
-            <div className="pm-bill__row pm-bill__row--total">
-              <span>Total</span>
-              <span>{formatPrice(total)}</span>
-            </div>
-            <p className="pm-bill__gst-note">GSTIN: 08XXXXX0000X1ZX · 18% GST</p>
-          </div>
-
-          {/* Form */}
+        <div className="pm-addr__body pm-addr__body--single">
           <div className="pm-addr__form-wrap">
             <form className="pm-addr__form" onSubmit={submitAddress} noValidate>
 
@@ -363,7 +389,7 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
                   </label>
                 </div>
                 {!sameAsPhone && (
-                  <div className={`pm-field ${formErrors.whatsapp ? "pm-field--err" : ""}`} style={{marginTop:"0.4rem"}}>
+                  <div className={`pm-field ${formErrors.whatsapp ? "pm-field--err" : ""}`} style={{ marginTop: "0.4rem" }}>
                     <input id="pm-wa" type="tel" placeholder="WhatsApp number" maxLength={10}
                       value={form.whatsapp} onChange={e => setField("whatsapp", e.target.value.replace(/\D/g, ""))} />
                     {formErrors.whatsapp && <p className="pm-err">{formErrors.whatsapp}</p>}
@@ -373,7 +399,7 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
 
               <div className={`pm-field ${formErrors.address ? "pm-field--err" : ""}`}>
                 <label htmlFor="pm-addr">Street / House / Flat *</label>
-                <input id="pm-addr" type="text" placeholder="e.g. 45, Shivaji Nagar, Near Post Office"
+                <input id="pm-addr" type="text" placeholder="e.g. 45, Shivaji Nagar"
                   value={form.address} onChange={e => setField("address", e.target.value)} />
                 {formErrors.address && <p className="pm-err">{formErrors.address}</p>}
               </div>
@@ -399,6 +425,10 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
                   value={form.pincode} onChange={e => setField("pincode", e.target.value.replace(/\D/g, ""))} />
                 {formErrors.pincode && <p className="pm-err">{formErrors.pincode}</p>}
               </div>
+
+              <p className="pm-addr__wa-hint">
+                📲 Your order bill will be auto-sent to your WhatsApp after payment
+              </p>
 
               <button type="submit" className="pm-addr__submit">
                 Proceed to Payment →

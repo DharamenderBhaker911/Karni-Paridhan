@@ -1780,13 +1780,21 @@ main { overflow: hidden; }
 }
 
 /* â”€â”€ ADDRESS CARD (two-column layout) â”€â”€ */
-.pm-addr-card { max-width: 860px; }
+.pm-addr-card { max-width: 520px; }
 
+/* Two-column (default, not used now) */
 .pm-addr__body {
   display: grid;
   grid-template-columns: 280px 1fr;
   flex: 1;
   overflow: hidden;
+}
+
+/* Single-column: form only */
+.pm-addr__body--single {
+  display: block;
+  overflow-y: auto;
+  max-height: calc(92vh - 58px);
 }
 
 /* Bill sidebar */
@@ -2686,32 +2694,99 @@ main { overflow: hidden; }
   .swipeable-main    { aspect-ratio: 1 / 1; }
 }
 
-/* ── Product Grid — Mobile ── */
+/* ── Product Grid — Mobile (correct class names) ── */
 @media (max-width: 600px) {
   .product-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.65rem !important;
-    padding: 0.5rem !important;
+    gap: 0.55rem !important;
+    padding: 0.55rem !important;
   }
-  .product-card { border-radius: 0.8rem; }
-  .card-img-wrap { aspect-ratio: 3 / 4; }
-  .card-body { padding: 0.6rem 0.65rem 0.5rem; gap: 0.3rem; }
-  .card-name { font-size: 0.78rem; line-height: 1.25; -webkit-line-clamp: 2; }
-  .card-price { font-size: 1rem; }
-  .card-original { font-size: 0.72rem; }
-  .card-actions { gap: 0.4rem; }
+
+  .product-card {
+    border-radius: 0.75rem;
+    transform: none !important; /* disable hover lift on touch */
+  }
+
+  /* Full image — not half-cut */
+  .product-media {
+    aspect-ratio: 3 / 4;
+    width: 100%;
+    overflow: hidden;
+  }
+  .product-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center; /* show face/top of garment */
+  }
+
+  .product-info {
+    padding: 0.5rem 0.55rem 0.55rem;
+  }
+  .product-category { font-size: 0.6rem; }
+  .product-name {
+    font-size: 0.76rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-tone { display: none; } /* hide shade line to save space */
+
+  .price-row   { gap: 0.25rem; flex-wrap: wrap; }
+  .price-current  { font-size: 0.92rem; }
+  .price-original { font-size: 0.65rem; }
+
+  .card-actions { gap: 0.3rem; margin-top: 0.35rem; }
   .card-actions .btn-ghost,
   .card-actions .btn-primary {
-    font-size: 0.72rem;
-    padding: 0.5rem 0.4rem;
+    font-size: 0.68rem;
+    padding: 0.45rem 0.3rem;
+    border-radius: 0.45rem;
   }
 }
 
-@media (max-width: 380px) {
-  .product-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; }
-  .card-actions { flex-direction: column; gap: 0.35rem; }
+/* Tiny phones */
+@media (max-width: 360px) {
+  .product-grid { gap: 0.4rem !important; padding: 0.4rem !important; }
+  .product-name { font-size: 0.7rem; }
+  .price-current { font-size: 0.85rem; }
+  .card-actions { flex-direction: column; gap: 0.28rem; }
   .card-actions .btn-ghost,
-  .card-actions .btn-primary { width: 100%; font-size: 0.75rem; padding: 0.55rem; }
+  .card-actions .btn-primary { width: 100%; font-size: 0.72rem; padding: 0.5rem; }
+}
+
+/* ── Payment modal mobile ── */
+@media (max-width: 480px) {
+  .pm-overlay { padding: 0; align-items: flex-end; }
+  .pm-card    { border-radius: 1.2rem 1.2rem 0 0; max-height: 96vh; }
+  .pm-pay     { border-radius: 1.2rem 1.2rem 0 0; max-height: 96vh; max-width: 100%; }
+  .pm-success { border-radius: 1.2rem 1.2rem 0 0; }
+  .pm-field-row { grid-template-columns: 1fr; }
+  .pm-pay__amount-num { font-size: 2.4rem; }
+}
+
+/* ── Navigation — Mobile ── */
+@media (max-width: 600px) {
+  .nav-inner { padding: 0 1rem; }
+  .nav-logo-text { font-size: 1.1rem !important; }
+  .nav-actions { gap: 0.4rem; }
+}
+
+/* ── Hero Section — Mobile ── */
+@media (max-width: 600px) {
+  .hero { min-height: 70vh; padding: 1.5rem 1rem; }
+  .hero-title { font-size: clamp(1.8rem, 8vw, 2.8rem) !important; }
+  .hero-sub   { font-size: 0.85rem; }
+  .hero-cta-row { flex-direction: column; gap: 0.75rem; }
+  .hero-cta-row .btn-primary,
+  .hero-cta-row .btn-ghost { width: 100%; text-align: center; }
+}
+
+/* ── Cart Drawer — Mobile ── */
+@media (max-width: 480px) {
+  .cart-drawer { width: 100vw; }
 }
 
 /* ── Payment modal mobile ── */
@@ -2752,4 +2827,195 @@ main { overflow: hidden; }
 /* ── Sale Toast — Small ── */
 @media (max-width: 420px) {
   .sale-toast { width: calc(100vw - 2rem); right: 1rem; bottom: 1rem; }
+}
+
+/* ══════════════════════════════════════════════════
+   NEW PAYMENT UI ELEMENTS
+══════════════════════════════════════════════════ */
+
+/* Sending spinner screen */
+.pm-sending {
+  background: #fff;
+  border-radius: 1.2rem;
+  width: 100%;
+  max-width: 340px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  box-shadow: 0 32px 100px rgba(0,0,0,0.35);
+}
+.pm-sending__spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid #e8e8e8;
+  border-top-color: #25D366;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 0.4rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.pm-sending__title { font-size: 1.05rem; font-weight: 700; color: #111; }
+.pm-sending__sub   { font-size: 0.82rem; color: #666; }
+.pm-sending__wa    { font-size: 0.9rem; font-weight: 700; color: #25D366; font-family: monospace; }
+.pm-sending__note  { font-size: 0.68rem; color: #bbb; }
+
+/* Auto-send notice on payment screen */
+.pm-pay__auto-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.65rem;
+  padding: 0.65rem 0.8rem;
+  font-size: 0.74rem;
+  color: #166534;
+  width: 100%;
+  line-height: 1.4;
+}
+.pm-pay__auto-note span:first-child { flex-shrink: 0; font-size: 1rem; }
+
+/* WA notify strip on bill section */
+.pm-pay__wa-notify {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f0fdf4;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.72rem;
+  color: #166534;
+  margin-top: 0.3rem;
+  line-height: 1.4;
+}
+.pm-pay__wa-notify span:first-child { flex-shrink: 0; }
+
+/* Address page — WA hint below form */
+.pm-addr__wa-hint {
+  font-size: 0.72rem;
+  color: #16a34a;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.55rem;
+  padding: 0.5rem 0.75rem;
+  line-height: 1.5;
+  margin-top: 0.2rem;
+}
+
+/* Success close button */
+.pm-success__close {
+  margin-top: 0.5rem;
+  padding: 0.6rem 2rem;
+  background: #1a1015;
+  color: #fff;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.pm-success__close:hover { background: #3d2430; }
+
+/* ══════════════════════════════════════════════════
+   MOBILE PRODUCT GRID — SINGLE COLUMN
+   (overrides the 2-column rule above)
+══════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  /* Single column — full image + name visible */
+  .product-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.9rem !important;
+    padding: 0.75rem !important;
+  }
+
+  /* Card layout: image left (40%), info right (60%) — horizontal card */
+  .product-card {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    border-radius: 0.85rem;
+    overflow: hidden;
+    transform: none !important;
+  }
+
+  /* Image: fixed width, full height of card */
+  .product-media {
+    width: 38vw;
+    min-width: 130px;
+    max-width: 160px;
+    flex-shrink: 0;
+    aspect-ratio: auto !important; /* let height be set by card */
+    min-height: 160px;
+  }
+  .product-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  /* Info: fills remaining width */
+  .product-info {
+    flex: 1;
+    padding: 0.8rem 0.75rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .product-category {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .product-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.3;
+    /* show up to 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-tone { font-size: 0.7rem; color: #999; }
+
+  .price-row   { margin-top: 0.2rem; gap: 0.3rem; flex-wrap: wrap; }
+  .price-current  { font-size: 1.05rem; }
+  .price-original { font-size: 0.72rem; }
+
+  /* Buttons: side by side */
+  .card-actions {
+    flex-direction: row;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.4rem;
+  }
+  .card-actions .btn-ghost,
+  .card-actions .btn-primary {
+    flex: 1;
+    font-size: 0.72rem;
+    padding: 0.5rem 0.4rem;
+    border-radius: 0.45rem;
+    text-align: center;
+  }
+
+  /* Tap hint — reposition for horizontal card */
+  .product-tap-hint { display: none; }
+}
+
+/* Very tiny phones — keep horizontal but adjust widths */
+@media (max-width: 360px) {
+  .product-media {
+    width: 110px;
+    min-width: 110px;
+    min-height: 140px;
+  }
+  .product-name { font-size: 0.82rem; }
+  .price-current { font-size: 0.95rem; }
 }
