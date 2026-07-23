@@ -46,11 +46,11 @@ function SalePopup({ onClose }) {
       <p className="sale-toast__headline serif">Royal Collection<br /><em>at Unbeatable Prices</em></p>
 
       {/* Price list */}
-      <ul className="sale-toast__list">
+      {/* <ul className="sale-toast__list">
         <li><span>👑 Poshak</span><span>₹1,200 – ₹2,500</span></li>
         <li><span>🌸 Anarkali</span><span>₹700 – ₹2,000</span></li>
         <li><span>✨ Kurta Set</span><span>₹500 – ₹1,600</span></li>
-      </ul>
+      </ul> */}
 
       <button
         type="button"

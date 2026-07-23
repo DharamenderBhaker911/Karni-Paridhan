@@ -2546,7 +2546,6 @@ main { overflow: hidden; }
   .checkout-qr-wrapper { flex-direction: column; text-align: center; }
   .checkout-qr-steps { align-items: center; }
 }
-}
 @media (max-width: 480px) {
   .checkout-bill-card { padding: 0.9rem; }
 }
