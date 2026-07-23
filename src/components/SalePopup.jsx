@@ -55,7 +55,7 @@ function SalePopup({ onClose }) {
       <button
         type="button"
         className="sale-toast__cta"
-        onClick={handleClose}
+        onClick={handleClose}        // Got tho the collection 
       >
         Shop Now →
       </button>

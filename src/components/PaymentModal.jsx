@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { formatPrice } from "../utils/format";
 
@@ -11,12 +11,12 @@ const paytmLogo   = "https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_L
 const gpayLogo    = "https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg";
 const phonepeLogo = "https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg";
 
-// Steps: address → payment → confirm → success
+// Steps: address → payment → success
 function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess }) {
-  const [step, setStep]           = useState("address");
-  const [sameAsPhone, setSameAs]  = useState(true);
-  const [formErrors, setErrors]   = useState({});
-  const [form, setForm]           = useState({
+  const [step, setStep]         = useState("address");
+  const [sameAsPhone, setSameAs] = useState(true);
+  const [formErrors, setErrors] = useState({});
+  const [form, setForm]         = useState({
     name: "", phone: "", whatsapp: "",
     address: "", city: "", state: "", pincode: "",
   });
@@ -25,13 +25,28 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     () => "#KP" + Date.now().toString(36).toUpperCase().slice(-6)
   );
 
-  const base         = subtotal;
-  const gst          = Math.round(base * GST_RATE);
-  const cgst         = Math.round(gst / 2);
-  const sgst         = gst - cgst;
-  const total        = base + gst;
-  const upiUrl       = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${total.toFixed(2)}&tn=${orderId}`;
-  const waNum        = sameAsPhone ? form.phone : form.whatsapp;
+  const qrRef       = useRef(null);
+  const payBodyRef  = useRef(null);
+
+  const base  = subtotal;
+  const gst   = Math.round(base * GST_RATE);
+  const cgst  = Math.round(gst / 2);
+  const sgst  = gst - cgst;
+  const total = base + gst;
+  const upiUrl = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${total.toFixed(2)}&tn=${orderId}`;
+  const waNum  = sameAsPhone ? form.phone : form.whatsapp;
+
+  // Auto-scroll down to QR section 1.5s after payment page loads
+  useEffect(() => {
+    if (step === "payment" && payBodyRef.current) {
+      const timer = setTimeout(() => {
+        if (qrRef.current) {
+          qrRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
 
   function upiLink(pkg) {
     const p = `pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${total.toFixed(2)}&tn=${orderId}`;
@@ -45,6 +60,28 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     return `upi://pay?${p}`;
   }
 
+  function downloadQR() {
+    const svg = document.querySelector(".pm-qr-svg-el");
+    if (!svg) return;
+    const svgData  = new XMLSerializer().serializeToString(svg);
+    const canvas   = document.createElement("canvas");
+    const size     = 300;
+    canvas.width   = size;
+    canvas.height  = size;
+    const ctx      = canvas.getContext("2d");
+    const img      = new Image();
+    img.onload = () => {
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, size, size);
+      ctx.drawImage(img, 0, 0, size, size);
+      const a    = document.createElement("a");
+      a.download = `KarniParidhan-QR-${orderId}.png`;
+      a.href     = canvas.toDataURL("image/png");
+      a.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+  }
+
   function setField(k, v) {
     setForm(f => ({ ...f, [k]: v }));
     if (formErrors[k]) setErrors(e => ({ ...e, [k]: "" }));
@@ -52,13 +89,13 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
 
   function validate() {
     const e = {};
-    if (!form.name.trim())                              e.name     = "Full name required";
-    if (!/^\d{10}$/.test(form.phone.trim()))           e.phone    = "Valid 10-digit number required";
-    if (!sameAsPhone && !/^\d{10}$/.test(form.whatsapp.trim())) e.whatsapp = "Valid 10-digit WhatsApp number";
-    if (!form.address.trim())                           e.address  = "Address required";
-    if (!form.city.trim())                              e.city     = "City required";
-    if (!form.state.trim())                             e.state    = "State required";
-    if (!/^\d{6}$/.test(form.pincode.trim()))          e.pincode  = "Valid 6-digit PIN required";
+    if (!form.name.trim())                                          e.name     = "Full name required";
+    if (!/^\d{10}$/.test(form.phone.trim()))                       e.phone    = "Valid 10-digit number required";
+    if (!sameAsPhone && !/^\d{10}$/.test(form.whatsapp.trim()))    e.whatsapp = "Valid 10-digit WhatsApp number";
+    if (!form.address.trim())                                       e.address  = "Address required";
+    if (!form.city.trim())                                          e.city     = "City required";
+    if (!form.state.trim())                                         e.state    = "State required";
+    if (!/^\d{6}$/.test(form.pincode.trim()))                      e.pincode  = "Valid 6-digit PIN required";
     return e;
   }
 
@@ -68,11 +105,6 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
     setStep("payment");
-  }
-
-  function handleUpiClick() {
-    // After user taps a UPI app, move to confirm step
-    setTimeout(() => setStep("confirm"), 800);
   }
 
   function sendWhatsApp() {
@@ -96,7 +128,7 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
       `Phone   : ${form.phone}\n` +
       `WhatsApp: ${waNum}\n` +
       `Address : ${form.address}\n` +
-      `City    : ${form.city}, ${form.state} – ${form.pincode}\n` +
+      `${form.city}, ${form.state} – ${form.pincode}\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `✅ Payment Done via UPI`
     );
@@ -105,7 +137,7 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     setTimeout(() => { onSuccess(); onClose(); }, 5000);
   }
 
-  /* ─── SUCCESS ─────────────────────────────────────────────────── */
+  /* ─── SUCCESS ─────────────────────────────────────── */
   if (step === "success") {
     return (
       <div className="pm-overlay">
@@ -119,8 +151,8 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
           <h2 className="pm-success__title">Order Placed! 🎉</h2>
           <p  className="pm-success__id">{orderId}</p>
           <p  className="pm-success__msg">
-            Thank you, <strong>{form.name}</strong>! Your order details have been sent
-            via WhatsApp. Delivering to <strong>{form.city}, {form.state}</strong>.
+            Thank you, <strong>{form.name}</strong>! Your order details have been sent via WhatsApp.<br />
+            Delivering to <strong>{form.city}, {form.state}</strong>.
           </p>
           <div className="pm-success__badge">{formatPrice(total)} Paid via UPI</div>
           <p className="pm-success__eta">📦 Expected delivery: 5–7 business days</p>
@@ -129,72 +161,13 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     );
   }
 
-  /* ─── CONFIRM (after UPI app clicked) ─────────────────────────── */
-  if (step === "confirm") {
-    return (
-      <div className="pm-overlay">
-        <div className="pm-card">
-          <div className="pm-card__head">
-            <button className="pm-card__back" onClick={() => setStep("payment")}>←</button>
-            <span className="pm-card__head-title">Confirm Payment</span>
-          </div>
-          <div className="pm-confirm__body">
-            <div className="pm-confirm__icon">💳</div>
-            <h3 className="pm-confirm__title">Did your payment go through?</h3>
-            <p  className="pm-confirm__sub">
-              Complete the payment of <strong>₹{total.toFixed(2)}</strong> on your UPI app,
-              then send us your order details on WhatsApp.
-            </p>
-
-            <div className="pm-confirm__bill">
-              <div className="pm-confirm__bill-row">
-                <span>Order ID</span><span>{orderId}</span>
-              </div>
-              <div className="pm-confirm__bill-row">
-                <span>Product</span><span className="pm-confirm__product">{productName || "—"}</span>
-              </div>
-              {selectedSize && (
-                <div className="pm-confirm__bill-row">
-                  <span>Size</span>
-                  <span className="pm-confirm__size-pill">{selectedSize}</span>
-                </div>
-              )}
-              <div className="pm-confirm__bill-row">
-                <span>Paid to</span><span>{UPI_ID}</span>
-              </div>
-              <div className="pm-confirm__bill-divider" />
-              <div className="pm-confirm__bill-row pm-confirm__bill-row--total">
-                <span>Total Paid</span><span>₹{total.toFixed(2)}</span>
-              </div>
-            </div>
-
-            <button className="pm-confirm__wa-btn" onClick={sendWhatsApp}>
-              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                <path d="M12 0C5.374 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.83L.057 23.117a.75.75 0 0 0 .93.93l5.29-1.467A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.816 9.816 0 0 1-5.032-1.387l-.36-.214-3.733 1.035 1.034-3.736-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/>
-              </svg>
-              Send Order on WhatsApp
-            </button>
-            <p className="pm-confirm__wa-note">
-              Opens WhatsApp with your bill — sends to our team automatically
-            </p>
-
-            <button className="pm-confirm__back-btn" onClick={() => setStep("payment")}>
-              ← Go back to Payment
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  /* ─── PAYMENT SCREEN ──────────────────────────────────────────── */
+  /* ─── PAYMENT SCREEN ──────────────────────────────── */
   if (step === "payment") {
     return (
       <div className="pm-overlay">
-        <div className="pm-pay">
+        <div className="pm-pay" ref={payBodyRef}>
 
-          {/* Header */}
+          {/* Dark Header */}
           <div className="pm-pay__header">
             <button className="pm-pay__back" onClick={() => setStep("address")}>←</button>
             <div className="pm-pay__header-info">
@@ -204,83 +177,126 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
             <span>🔒</span>
           </div>
 
-          {/* Amount */}
-          <div className="pm-pay__amount-block">
-            <p className="pm-pay__amount-label">Order Amount</p>
-            <p className="pm-pay__amount">₹{total.toFixed(2)}</p>
-            <p className="pm-pay__amount-sub">Incl. 18% GST · {orderId}</p>
-          </div>
+          {/* ── SECTION 1: Amount + GST Bill (visible first) ── */}
+          <div className="pm-pay__bill-section">
+            <p className="pm-pay__bill-eyebrow">Order Summary</p>
+            {productName && (
+              <div className="pm-pay__bill-product">{productName} {selectedSize && <span className="pm-pay__size-pill">{selectedSize}</span>}</div>
+            )}
 
-          {/* QR */}
-          <div className="pm-pay__qr">
-            <div className="pm-pay__qr-box">
-              <QRCodeSVG value={upiUrl} size={200} fgColor="#111" bgColor="#fff" level="H" />
+            <div className="pm-pay__amount-big">
+              <span className="pm-pay__currency">₹</span>
+              <span className="pm-pay__amount-num">{total.toFixed(2)}</span>
             </div>
-            <p className="pm-pay__qr-hint">Scan with any UPI app to pay</p>
+
+            <div className="pm-pay__gst-breakdown">
+              <div className="pm-pay__gst-row">
+                <span>Item Price</span><span>₹{base.toFixed(2)}</span>
+              </div>
+              <div className="pm-pay__gst-row">
+                <span>CGST @ 9%</span><span>+₹{cgst.toFixed(2)}</span>
+              </div>
+              <div className="pm-pay__gst-row">
+                <span>SGST @ 9%</span><span>+₹{sgst.toFixed(2)}</span>
+              </div>
+              <div className="pm-pay__gst-row">
+                <span>Delivery</span><span className="pm-pay__free">FREE</span>
+              </div>
+              <div className="pm-pay__gst-total">
+                <span>Total Payable</span><span>₹{total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div className="pm-pay__delivery-addr">
+              <span>📍</span>
+              <span>{form.name} · {form.address}, {form.city} – {form.pincode}</span>
+              <button className="pm-pay__addr-change" onClick={() => setStep("address")}>Change</button>
+            </div>
+
+            <p className="pm-pay__scroll-hint">↓ Scroll down to pay</p>
           </div>
 
-          {/* Divider */}
-          <div className="pm-pay__divider"><span>or choose app</span></div>
+          {/* ── SECTION 2: QR + Download + App Buttons ── */}
+          <div className="pm-pay__payment-section" ref={qrRef}>
+            <p className="pm-pay__pay-eyebrow">Choose Payment Method</p>
 
-          {/* UPI App Buttons */}
-          <div className="pm-pay__apps">
-            <a
-              href={upiLink("net.one97.paytm")}
-              className="pm-pay__app-btn"
-              onClick={handleUpiClick}
-            >
-              <img src={paytmLogo} alt="Paytm" />
-              <span>Paytm</span>
-            </a>
-            <a
-              href={upiLink("com.google.android.apps.nbu.paisa.user")}
-              className="pm-pay__app-btn"
-              onClick={handleUpiClick}
-            >
-              <img src={gpayLogo} alt="GPay" />
-              <span>GPay</span>
-            </a>
-            <a
-              href={upiLink("com.phonepe.app")}
-              className="pm-pay__app-btn"
-              onClick={handleUpiClick}
-            >
-              <img src={phonepeLogo} alt="PhonePe" />
-              <span>PhonePe</span>
-            </a>
+            {/* QR Code */}
+            <div className="pm-pay__qr-block">
+              <div className="pm-pay__qr-box">
+                <QRCodeSVG
+                  value={upiUrl}
+                  size={200}
+                  fgColor="#111"
+                  bgColor="#fff"
+                  level="H"
+                  className="pm-qr-svg-el"
+                />
+              </div>
+              <p className="pm-pay__qr-upi">UPI: {UPI_ID}</p>
+              <p className="pm-pay__qr-hint">Scan with any UPI app</p>
+              <button className="pm-pay__download-btn" onClick={downloadQR}>
+                ⬇ Download QR Code
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="pm-pay__or"><span>or pay via app</span></div>
+
+            {/* App Buttons */}
+            <div className="pm-pay__app-list">
+              <a href={upiLink("net.one97.paytm")} className="pm-pay__app-btn">
+                <img src={paytmLogo} alt="Paytm" className="pm-pay__app-logo" />
+                <span className="pm-pay__app-name">Paytm</span>
+                <span className="pm-pay__app-arrow">›</span>
+              </a>
+              <a href={upiLink("com.google.android.apps.nbu.paisa.user")} className="pm-pay__app-btn">
+                <img src={gpayLogo} alt="Google Pay" className="pm-pay__app-logo" />
+                <span className="pm-pay__app-name">Google Pay</span>
+                <span className="pm-pay__app-arrow">›</span>
+              </a>
+              <a href={upiLink("com.phonepe.app")} className="pm-pay__app-btn">
+                <img src={phonepeLogo} alt="PhonePe" className="pm-pay__app-logo" />
+                <span className="pm-pay__app-name">PhonePe</span>
+                <span className="pm-pay__app-arrow">›</span>
+              </a>
+            </div>
+
+            {/* WhatsApp confirm — after scrolling to the bottom */}
+            <div className="pm-pay__wa-block">
+              <p className="pm-pay__wa-title">✅ After Payment — Confirm Order</p>
+              <p className="pm-pay__wa-sub">Pay via UPI above, then tap below to send us your order details on WhatsApp</p>
+              <button className="pm-pay__wa-btn" onClick={sendWhatsApp}>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  <path d="M12 0C5.374 0 0 5.373 0 12c0 2.117.554 4.103 1.523 5.83L.057 23.117a.75.75 0 0 0 .93.93l5.29-1.467A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.816 9.816 0 0 1-5.032-1.387l-.36-.214-3.733 1.035 1.034-3.736-.234-.372A9.818 9.818 0 0 1 2.182 12C2.182 6.58 6.58 2.182 12 2.182S21.818 6.58 21.818 12 17.42 21.818 12 21.818z"/>
+                </svg>
+                Send Order on WhatsApp
+              </button>
+            </div>
+
+            <p className="pm-pay__footer">Order ID: {orderId} · All UPI apps accepted</p>
           </div>
-
-          {/* Mini bill */}
-          <div className="pm-pay__mini-bill">
-            <div className="pm-pay__mini-row"><span>Item</span><span>₹{base.toFixed(2)}</span></div>
-            <div className="pm-pay__mini-row"><span>GST 18%</span><span>+₹{gst.toFixed(2)}</span></div>
-            <div className="pm-pay__mini-row pm-pay__mini-row--total"><span>Total</span><span>₹{total.toFixed(2)}</span></div>
-          </div>
-
-          <p className="pm-pay__footer">After paying, click any app above to confirm →</p>
         </div>
       </div>
     );
   }
 
-  /* ─── ADDRESS FORM ────────────────────────────────────────────── */
+  /* ─── ADDRESS FORM ────────────────────────────────── */
   return (
     <div className="pm-overlay">
       <div className="pm-card pm-addr-card">
 
-        {/* Header */}
         <div className="pm-card__head">
           <button className="pm-card__back" onClick={onClose}>←</button>
           <span className="pm-card__head-title">Delivery Address</span>
-          <span className="pm-card__head-step">Step 1 of 2</span>
+          <span className="pm-card__head-step">Step 1 / 2</span>
         </div>
 
         <div className="pm-addr__body">
 
-          {/* Left — Bill summary */}
+          {/* Bill Sidebar */}
           <div className="pm-addr__bill">
             <p className="pm-bill__title">🧾 Order Summary</p>
-
             {productName && (
               <div className="pm-bill__row">
                 <span className="pm-bill__label">Product</span>
@@ -290,14 +306,10 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
             {selectedSize && (
               <div className="pm-bill__row">
                 <span className="pm-bill__label">Size</span>
-                <span className="pm-bill__val">
-                  <span className="pm-bill__size">{selectedSize}</span>
-                </span>
+                <span className="pm-bill__val"><span className="pm-bill__size">{selectedSize}</span></span>
               </div>
             )}
-
             <div className="pm-bill__divider" />
-
             <div className="pm-bill__row">
               <span className="pm-bill__label">Item Price</span>
               <span className="pm-bill__val">{formatPrice(base)}</span>
@@ -314,17 +326,15 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
               <span className="pm-bill__label">Delivery</span>
               <span className="pm-bill__val pm-bill__free">FREE</span>
             </div>
-
             <div className="pm-bill__divider pm-bill__divider--thick" />
-
             <div className="pm-bill__row pm-bill__row--total">
-              <span>Total Payable</span>
+              <span>Total</span>
               <span>{formatPrice(total)}</span>
             </div>
-            <p className="pm-bill__gst-note">GSTIN: 08XXXXX0000X1ZX · 18% GST applied</p>
+            <p className="pm-bill__gst-note">GSTIN: 08XXXXX0000X1ZX · 18% GST</p>
           </div>
 
-          {/* Right — Form */}
+          {/* Form */}
           <div className="pm-addr__form-wrap">
             <form className="pm-addr__form" onSubmit={submitAddress} noValidate>
 
@@ -337,14 +347,12 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
                 </div>
                 <div className={`pm-field ${formErrors.phone ? "pm-field--err" : ""}`}>
                   <label htmlFor="pm-phone">Mobile *</label>
-                  <input id="pm-phone" type="tel" placeholder="10-digit number" maxLength={10}
-                    value={form.phone}
-                    onChange={e => setField("phone", e.target.value.replace(/\D/g, ""))} />
+                  <input id="pm-phone" type="tel" placeholder="10-digit" maxLength={10}
+                    value={form.phone} onChange={e => setField("phone", e.target.value.replace(/\D/g, ""))} />
                   {formErrors.phone && <p className="pm-err">{formErrors.phone}</p>}
                 </div>
               </div>
 
-              {/* WhatsApp */}
               <div className="pm-field pm-field--wa">
                 <div className="pm-wa__label-row">
                   <label>📱 WhatsApp Number *</label>
@@ -357,8 +365,7 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
                 {!sameAsPhone && (
                   <div className={`pm-field ${formErrors.whatsapp ? "pm-field--err" : ""}`} style={{marginTop:"0.4rem"}}>
                     <input id="pm-wa" type="tel" placeholder="WhatsApp number" maxLength={10}
-                      value={form.whatsapp}
-                      onChange={e => setField("whatsapp", e.target.value.replace(/\D/g, ""))} />
+                      value={form.whatsapp} onChange={e => setField("whatsapp", e.target.value.replace(/\D/g, ""))} />
                     {formErrors.whatsapp && <p className="pm-err">{formErrors.whatsapp}</p>}
                   </div>
                 )}
@@ -389,15 +396,13 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
               <div className={`pm-field ${formErrors.pincode ? "pm-field--err" : ""}`}>
                 <label htmlFor="pm-pin">PIN Code *</label>
                 <input id="pm-pin" type="text" placeholder="6-digit PIN" maxLength={6}
-                  value={form.pincode}
-                  onChange={e => setField("pincode", e.target.value.replace(/\D/g, ""))} />
+                  value={form.pincode} onChange={e => setField("pincode", e.target.value.replace(/\D/g, ""))} />
                 {formErrors.pincode && <p className="pm-err">{formErrors.pincode}</p>}
               </div>
 
               <button type="submit" className="pm-addr__submit">
-                Continue to Payment →
+                Proceed to Payment →
               </button>
-
             </form>
           </div>
         </div>
