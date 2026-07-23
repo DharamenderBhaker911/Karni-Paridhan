@@ -5,7 +5,7 @@ import { products } from "./data/products";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import ProductGrid from "./components/ProductGrid";
-import ProductDetails from "./components/ProductDetails";
+import ProductPage from "./components/ProductPage";
 import CartDrawer from "./components/CartDrawer";
 import Footer from "./components/Footer";
 import PaymentModal from "./components/PaymentModal";
@@ -18,7 +18,6 @@ function AppContent() {
   const [showSalePopup, setShowSalePopup] = useState(true);
   const { addToCart } = useCart();
 
-  // When a header category is clicked: set the filter AND scroll to products
   function handleCategorySelect(categoryName) {
     setActiveCategory(categoryName);
     setTimeout(() => {
@@ -27,7 +26,6 @@ function AppContent() {
     }, 50);
   }
 
-  // "Buy Now" from card → open ProductDetails so user MUST pick size first
   function handleCardBuyNow(product) {
     setSelectedProduct(product);
   }
@@ -46,9 +44,11 @@ function AppContent() {
       />
       <Footer />
 
+      {/* ── Full-Screen Product Detail Page ── */}
       {selectedProduct && (
-        <ProductDetails
+        <ProductPage
           product={selectedProduct}
+          allProducts={products}
           onClose={() => setSelectedProduct(null)}
           onAdd={(productWithOptions) => {
             addToCart(productWithOptions);
@@ -75,7 +75,6 @@ function AppContent() {
 
       <CartDrawer />
 
-      {/* 75% OFF Sale Popup */}
       {showSalePopup && (
         <SalePopup onClose={() => setShowSalePopup(false)} />
       )}
