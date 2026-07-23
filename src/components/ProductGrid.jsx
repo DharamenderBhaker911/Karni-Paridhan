@@ -1,78 +1,143 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ProductCard from "./ProductCard";
 
 const ALL = "All";
+const PAGE_SIZE = 8; // products per page
 
 function ProductGrid({ products, onOpen, onAdd, onBuyNow, activeCategory, setActiveCategory }) {
-  // activeCategory and setActiveCategory are now controlled from App.jsx
-  // so the Header category clicks directly drive this filter
+  const [page, setPage] = useState(1);
+
   const activeFilter = activeCategory || ALL;
 
-  // Randomize products order once on component mount
-  const randomizedProducts = useMemo(() => {
-    return [...products].sort(() => Math.random() - 0.5);
+  // Stable order (sort by id so it's consistent)
+  const sortedProducts = useMemo(() => {
+    return [...products].sort((a, b) => a.id.localeCompare(b.id));
   }, [products]);
 
-  // Derive unique categories from products
   const categories = useMemo(() => {
-    const cats = randomizedProducts.map((p) => p.category);
+    const cats = sortedProducts.map(p => p.category);
     return [ALL, ...new Set(cats)];
-  }, [randomizedProducts]);
+  }, [sortedProducts]);
 
   const filtered = useMemo(() => {
-    if (activeFilter === ALL) return randomizedProducts;
-    return randomizedProducts.filter((p) => p.category === activeFilter);
-  }, [randomizedProducts, activeFilter]);
+    const base = activeFilter === ALL
+      ? sortedProducts
+      : sortedProducts.filter(p => p.category === activeFilter);
+    return base;
+  }, [sortedProducts, activeFilter]);
 
-  function handleFilterClick(cat) {
+  // Reset to page 1 when filter changes
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  function handleFilter(cat) {
     if (setActiveCategory) setActiveCategory(cat);
+    setPage(1);
+    // Scroll to section
+    setTimeout(() => {
+      document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 60);
+  }
+
+  function goToPage(p) {
+    setPage(p);
+    setTimeout(() => {
+      document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 60);
   }
 
   return (
-    <section className="product-section" id="products">
-      <div className="product-section-header">
-        <div>
-          <p className="eyebrow">Our Collection</p>
-          <h2 className="serif">
-            {activeFilter === ALL ? "Shop the Full Range" : activeFilter}
+    <section className="shop-section" id="products">
+      {/* Section header */}
+      <div className="shop-header">
+        <div className="shop-header__left">
+          <p className="shop-eyebrow">Our Collection</p>
+          <h2 className="shop-title serif">
+            {activeFilter === ALL ? "Shop All Products" : activeFilter}
           </h2>
-          <p>
-            {filtered.length} piece{filtered.length !== 1 ? "s" : ""} available
+          <p className="shop-count">
+            {filtered.length} item{filtered.length !== 1 ? "s" : ""} found
           </p>
+        </div>
+        <div className="shop-header__right">
+          <span className="shop-sale-badge">🔥 75% OFF — Limited Time</span>
         </div>
       </div>
 
       {/* Category Filter Tabs */}
-      <div className="category-filters" role="group" aria-label="Filter by category">
-        {categories.map((cat) => (
+      <div className="shop-filters" role="group" aria-label="Filter by category">
+        {categories.map(cat => (
           <button
             key={cat}
             type="button"
-            className={`filter-btn ${activeFilter === cat ? "active" : ""}`}
-            onClick={() => handleFilterClick(cat)}
+            className={`shop-filter-btn ${activeFilter === cat ? "shop-filter-btn--active" : ""}`}
+            onClick={() => handleFilter(cat)}
             aria-pressed={activeFilter === cat}
           >
-            {cat}
+            {cat === ALL ? "🛍 All" : cat}
+            <span className="shop-filter-count">
+              {cat === ALL
+                ? products.length
+                : products.filter(p => p.category === cat).length}
+            </span>
           </button>
         ))}
       </div>
 
-      {/* Products */}
-      <div className="product-grid">
-        {filtered.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onOpen={onOpen}
-            onAdd={onAdd}
-            onBuyNow={onBuyNow}
-          />
-        ))}
-      </div>
+      {/* Product Grid */}
+      {paginated.length > 0 ? (
+        <div className="shop-grid">
+          {paginated.map(product => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onOpen={onOpen}
+              onAdd={onAdd}
+              onBuyNow={onBuyNow}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="shop-empty">
+          <p className="shop-empty__icon">🔍</p>
+          <p className="shop-empty__text">No products in this category yet.</p>
+        </div>
+      )}
 
-      {filtered.length === 0 && (
-        <div style={{ textAlign: "center", padding: "4rem", color: "var(--text-muted)" }}>
-          <p style={{ fontSize: "1.1rem" }}>No products in this category yet.</p>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="shop-pagination">
+          <button
+            className="shop-pg-btn"
+            onClick={() => goToPage(page - 1)}
+            disabled={page === 1}
+            aria-label="Previous page"
+          >
+            ← Prev
+          </button>
+
+          <div className="shop-pg-nums">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <button
+                key={n}
+                className={`shop-pg-num ${n === page ? "shop-pg-num--active" : ""}`}
+                onClick={() => goToPage(n)}
+                aria-label={`Page ${n}`}
+                aria-current={n === page ? "page" : undefined}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+
+          <button
+            className="shop-pg-btn"
+            onClick={() => goToPage(page + 1)}
+            disabled={page === totalPages}
+            aria-label="Next page"
+          >
+            Next →
+          </button>
         </div>
       )}
     </section>

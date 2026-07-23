@@ -1,83 +1,90 @@
 import { useState } from "react";
 import { formatPrice } from "../utils/format";
 
-const DISCOUNT_LABELS = {
-  "New": "badge-new",
-  "Best Seller": "badge-bestseller",
-};
-
 function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
 
   const discountPct = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null;
 
-  const badgeClass = DISCOUNT_LABELS[product.badge] || "";
-
   return (
-    <article className="product-card" onClick={() => onOpen(product)} style={{ cursor: "pointer" }}>
-      {/* Image area */}
-      <div className="product-media">
+    <article
+      className="pc"
+      onClick={() => onOpen(product)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => e.key === "Enter" && onOpen(product)}
+      aria-label={`View ${product.name}`}
+    >
+      {/* Image */}
+      <div className="pc__img-wrap">
+        {!imgLoaded && <div className="pc__skeleton" />}
         <img
           src={product.image}
           alt={product.name}
           loading="lazy"
+          onLoad={() => setImgLoaded(true)}
+          className={`pc__img ${imgLoaded ? "pc__img--loaded" : ""}`}
         />
 
-        {/* Badge */}
-        {product.badge && (
-          <span className={`product-badge ${badgeClass}`}>
-            {product.badge}
-          </span>
-        )}
-
-        {/* Discount % */}
+        {/* Discount badge */}
         {discountPct && (
-          <span className="discount-badge">-{discountPct}%</span>
+          <span className="pc__badge pc__badge--sale">{discountPct}% OFF</span>
         )}
 
-        {/* Wishlist button */}
-        {/* <button
+        {/* Wishlist */}
+        <button
           type="button"
-          className={`wishlist-btn ${wishlisted ? "active" : ""}`}
-          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          onClick={(e) => { e.stopPropagation(); setWishlisted((v) => !v); }}
+          className={`pc__wish ${wishlisted ? "pc__wish--active" : ""}`}
+          onClick={e => { e.stopPropagation(); setWishlisted(v => !v); }}
+          aria-label="Add to wishlist"
         >
           {wishlisted ? "❤️" : "🤍"}
-        </button> */}
+        </button>
 
-        {/* Subtle tap/click hint overlay */}
-        <div className="product-tap-hint" aria-hidden="true">
-          <span>👆 Tap to View</span>
-        </div>
+        {/* Category label */}
+        <span className="pc__cat-pill">{product.category}</span>
       </div>
 
       {/* Info */}
-      <div className="product-info">
-        <p className="product-category">{product.category}</p>
-        <h3 className="product-name">{product.name}</h3>
-        <p className="product-tone">{product.tone}</p>
+      <div className="pc__info">
+        <h3 className="pc__name">{product.name}</h3>
 
-        <div className="price-row">
-          <span className="price-current">{formatPrice(product.price)}</span>
+        {/* Star rating (static) */}
+        <div className="pc__stars" aria-label="4.5 stars">
+          {"★★★★☆"}
+          <span className="pc__rating-count">(48)</span>
+        </div>
+
+        <div className="pc__price-row">
+          <span className="pc__price">{formatPrice(product.price)}</span>
           {product.originalPrice && (
-            <span className="price-original">{formatPrice(product.originalPrice)}</span>
+            <span className="pc__orig">{formatPrice(product.originalPrice)}</span>
           )}
         </div>
 
-        <div className="card-actions">
+        {/* Sizes strip */}
+        <div className="pc__sizes">
+          {product.sizes?.slice(0, 5).map(s => (
+            <span key={s} className="pc__size">{s}</span>
+          ))}
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="pc__actions" onClick={e => e.stopPropagation()}>
           <button
             type="button"
-            className="btn-ghost"
-            onClick={(e) => { e.stopPropagation(); onAdd(product); }}
+            className="pc__btn pc__btn--cart"
+            onClick={() => onAdd(product)}
           >
-            Add to Cart
+            + Cart
           </button>
           <button
             type="button"
-            className="btn-primary"
-            onClick={(e) => { e.stopPropagation(); onBuyNow(product); }}
+            className="pc__btn pc__btn--buy"
+            onClick={() => onBuyNow(product)}
           >
             Buy Now
           </button>
