@@ -2546,8 +2546,308 @@ main { overflow: hidden; }
   .checkout-qr-wrapper { flex-direction: column; text-align: center; }
   .checkout-qr-steps { align-items: center; }
 }
+}
 @media (max-width: 480px) {
   .checkout-bill-card { padding: 0.9rem; }
 }
+
+/* ══════════════════════════════════════════════════
+   PAYMENT SCREEN — SCREENSHOT STYLE
+══════════════════════════════════════════════════ */
+.pay-screen {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 96vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+}
+
+/* Header bar */
+.pay-screen__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #1a1015;
+  padding: 1rem 1.1rem;
+  color: #fff;
+}
+.pay-screen__back {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.pay-screen__back:hover { background: rgba(255,255,255,0.2); }
+.pay-screen__header-info { flex: 1; }
+.pay-screen__shop {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+.pay-screen__upi {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.55);
+  margin-top: 0.1rem;
+  font-family: monospace;
+}
+.pay-screen__lock { font-size: 1rem; }
+
+/* Amount */
+.pay-screen__amount-row {
+  text-align: center;
+  padding: 1.2rem 1rem 0.8rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+.pay-screen__amount-label {
+  font-size: 0.72rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.2rem;
+}
+.pay-screen__amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #111;
+  line-height: 1;
+}
+.pay-screen__gst-note {
+  font-size: 0.68rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+  letter-spacing: 0.02em;
+}
+
+/* QR */
+.pay-screen__qr-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.4rem 1.5rem 0.8rem;
+  gap: 0.6rem;
+}
+.pay-screen__qr-wrap canvas,
+.pay-screen__qr-wrap svg {
+  border-radius: 0.6rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  border: 6px solid #fff;
+  outline: 2px solid #e8e8e8;
+}
+.pay-screen__qr-hint {
+  font-size: 0.73rem;
+  color: #888;
+  letter-spacing: 0.02em;
+}
+
+/* OR divider */
+.pay-screen__or {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 1.2rem;
+  color: #ccc;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.pay-screen__or::before,
+.pay-screen__or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #ebebeb;
+}
+
+/* Pay buttons */
+.pay-screen__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  margin: 0.45rem 1.2rem 0;
+  padding: 0.8rem 1rem;
+  border-radius: 0.7rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1a1015;
+  text-decoration: none;
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  cursor: pointer;
+}
+.pay-screen__btn:hover {
+  background: #f8f8f8;
+  border-color: #ccc;
+  transform: translateY(-1px);
+}
+.pay-screen__btn:active { transform: translateY(0); }
+.pay-screen__btn-logo {
+  height: 22px;
+  width: auto;
+  flex-shrink: 0;
+}
+.pay-screen__btn--paytm { border-color: #00BAF2; }
+.pay-screen__btn--paytm:hover { background: #f0fbff; }
+.pay-screen__btn--gpay { border-color: #4285F4; }
+.pay-screen__btn--gpay:hover { background: #f0f4ff; }
+.pay-screen__btn--phonepe { border-color: #5f259f; }
+.pay-screen__btn--phonepe:hover { background: #f6f0ff; }
+
+/* Order details table */
+.pay-screen__details {
+  margin: 1rem 1.2rem 0;
+  background: #fafafa;
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #f0f0f0;
+}
+.pay-screen__detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  font-size: 0.78rem;
+  color: #555;
+  border-bottom: 1px solid #f3f3f3;
+}
+.pay-screen__detail-row:last-child { border-bottom: none; }
+.pay-screen__detail-row--total {
+  font-weight: 700;
+  color: #111;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  padding-top: 0.35rem;
+  border-top: 1.5px solid #e8e8e8;
+  border-bottom: none;
+}
+
+/* WhatsApp confirm section */
+.pay-screen__wa-section {
+  margin: 1rem 1.2rem 0;
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 0.9rem;
+  padding: 1rem;
+  text-align: center;
+}
+.pay-screen__wa-label {
+  font-size: 0.78rem;
+  color: #166534;
+  font-weight: 600;
+  margin-bottom: 0.65rem;
+  line-height: 1.4;
+}
+.pay-screen__wa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: #25D366;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.65rem;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.18s, transform 0.13s;
+  box-shadow: 0 4px 14px rgba(37,211,102,0.35);
+}
+.pay-screen__wa-btn:hover { background: #1ebe5a; transform: translateY(-2px); }
+.pay-screen__wa-btn:active { transform: translateY(0); }
+.pay-screen__wa-note {
+  font-size: 0.66rem;
+  color: #4ade80;
+  margin-top: 0.5rem;
+}
+
+/* Footer */
+.pay-screen__footer {
+  text-align: center;
+  font-size: 0.65rem;
+  color: #bbb;
+  padding: 0.85rem 1rem 1rem;
+  letter-spacing: 0.02em;
+}
+
+/* WhatsApp checkbox field */
+.wa-group { margin-top: 0.1rem; }
+.wa-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+  cursor: default;
+}
+.wa-same-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.wa-same-checkbox input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--wine);
+  cursor: pointer;
+}
+.wa-input-wrap { margin-top: 0.35rem; }
+.wa-input-wrap input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(123,28,58,0.18);
+  border-radius: 0.7rem;
+  background: rgba(255,255,255,0.9);
+  font-size: 0.88rem;
+  color: var(--ink);
+  font-family: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+.wa-input-wrap input:focus { border-color: var(--wine); box-shadow: 0 0 0 3px rgba(123,28,58,0.1); }
+.wa-input-wrap.has-error input { border-color: #dc2626; }
+
+/* Checkout-page full screen for pay-screen */
+.checkout-page:has(.pay-screen) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(10,5,12,0.8);
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 480px) {
+  .pay-screen { max-height: 100vh; border-radius: 0; }
+  .pay-screen__amount { font-size: 2rem; }
+}
+
 
 
