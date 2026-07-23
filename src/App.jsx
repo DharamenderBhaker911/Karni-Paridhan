@@ -9,11 +9,13 @@ import ProductDetails from "./components/ProductDetails";
 import CartDrawer from "./components/CartDrawer";
 import Footer from "./components/Footer";
 import PaymentModal from "./components/PaymentModal";
+import SalePopup from "./components/SalePopup";
 
 function AppContent() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [directBuyProduct, setDirectBuyProduct] = useState(null);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [showSalePopup, setShowSalePopup] = useState(true);
   const { addToCart } = useCart();
 
   // When a header category is clicked: set the filter AND scroll to products
@@ -25,6 +27,11 @@ function AppContent() {
     }, 50);
   }
 
+  // "Buy Now" from card → open ProductDetails so user MUST pick size first
+  function handleCardBuyNow(product) {
+    setSelectedProduct(product);
+  }
+
   return (
     <main>
       <Header onCategorySelect={handleCategorySelect} />
@@ -33,7 +40,7 @@ function AppContent() {
         products={products}
         onOpen={setSelectedProduct}
         onAdd={addToCart}
-        onBuyNow={setDirectBuyProduct}
+        onBuyNow={handleCardBuyNow}
         activeCategory={activeCategory}
         setActiveCategory={setActiveCategory}
       />
@@ -58,6 +65,7 @@ function AppContent() {
         <PaymentModal
           subtotal={directBuyProduct.price * (directBuyProduct.qty || 1)}
           productName={directBuyProduct.name}
+          selectedSize={directBuyProduct.selectedSize}
           onClose={() => setDirectBuyProduct(null)}
           onSuccess={() => {
             setDirectBuyProduct(null);
@@ -66,6 +74,11 @@ function AppContent() {
       )}
 
       <CartDrawer />
+
+      {/* 75% OFF Sale Popup */}
+      {showSalePopup && (
+        <SalePopup onClose={() => setShowSalePopup(false)} />
+      )}
     </main>
   );
 }

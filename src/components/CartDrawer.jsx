@@ -3,6 +3,8 @@ import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
 import PaymentModal from "./PaymentModal";
 
+const GST_RATE = 0.18;
+
 function CartDrawer() {
   const {
     cartItems,
@@ -20,13 +22,19 @@ function CartDrawer() {
 
   const itemCount = cartItems.reduce((n, i) => n + i.qty, 0);
   const shipping = 0; // Free delivery
-  const total = subtotal + shipping;
+  const gstAmount = Math.round(subtotal * GST_RATE);
+  const total = subtotal + shipping + gstAmount;
 
   function handlePaymentSuccess() {
     clearCart();
     setCartOpen(false);
     setShowPayment(false);
   }
+
+  // Build a summary of product names for cart payment
+  const cartSummary = cartItems.length === 1
+    ? cartItems[0].name
+    : `${cartItems.length} items`;
 
   return (
     <>
@@ -129,12 +137,16 @@ function CartDrawer() {
                 <span>Delivery</span>
                 <span className="order-summary-val order-free">FREE</span>
               </div>
+              <div className="order-summary-row">
+                <span>GST (18%)</span>
+                <span className="order-summary-val">+{formatPrice(gstAmount)}</span>
+              </div>
               <div className="order-summary-divider" />
               <div className="order-summary-row order-total-row">
                 <span className="order-total-label">Total Payable</span>
                 <span className="order-total-amount">{formatPrice(total)}</span>
               </div>
-              <p className="order-tax-note">Inclusive of all taxes</p>
+              <p className="order-tax-note">Inclusive of 18% GST · CGST 9% + SGST 9%</p>
             </div>
 
             {/* Trust Badge */}
@@ -160,7 +172,8 @@ function CartDrawer() {
       {/* Payment Modal */}
       {showPayment && (
         <PaymentModal
-          subtotal={total}
+          subtotal={subtotal}
+          productName={cartSummary}
           onClose={() => setShowPayment(false)}
           onSuccess={handlePaymentSuccess}
         />

@@ -2366,3 +2366,188 @@ main { overflow: hidden; }
     padding: 0.2rem 0.4rem;
   }
 }
+
+/* ══════════════════════════════════════════════════
+   SALE TOAST — RIGHT-SIDE FLOATING NOTIFICATION
+══════════════════════════════════════════════════ */
+.sale-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 1.5rem;
+  z-index: 9000;
+  width: 260px;
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.1rem 1rem 0.85rem;
+  box-shadow:
+    0 4px 6px rgba(0,0,0,0.04),
+    0 12px 40px rgba(0,0,0,0.12),
+    0 0 0 1px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Slide in from right */
+.sale-toast--in {
+  animation: toastSlideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.sale-toast--out {
+  animation: toastSlideOut 0.32s ease-in forwards;
+}
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(110%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastSlideOut {
+  to   { opacity: 0; transform: translateX(110%); }
+}
+
+/* Close button */
+.sale-toast__close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.65rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: #f3f3f3;
+  color: #888;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+.sale-toast__close:hover { background: #e0e0e0; color: #333; }
+
+/* Eyebrow */
+.sale-toast__eyebrow {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #999;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding-right: 1.6rem;   /* room for close btn */
+}
+
+/* Big % */
+.sale-toast__badge-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+.sale-toast__pct {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #1a1015;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.sale-toast__pct sup {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.sale-toast__off {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #555;
+  letter-spacing: 0.06em;
+}
+
+/* Headline */
+.sale-toast__headline {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1015;
+  line-height: 1.35;
+  margin-top: -0.1rem;
+}
+.sale-toast__headline em {
+  font-style: italic;
+  color: #7b1c3a;
+}
+
+/* Thin divider */
+.sale-toast::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: #f0f0f0;
+  margin: 0.15rem 0;
+}
+
+/* Price list */
+.sale-toast__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.sale-toast__list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #555;
+}
+.sale-toast__list li span:last-child {
+  font-weight: 700;
+  color: #1a1015;
+  font-size: 0.78rem;
+}
+
+/* CTA */
+.sale-toast__cta {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.62rem 0.75rem;
+  background: #1a1015;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 0.55rem;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.18s, transform 0.15s;
+}
+.sale-toast__cta:hover { background: #3d2430; transform: translateY(-1px); }
+.sale-toast__cta:active { transform: translateY(0); }
+
+/* Fine print */
+.sale-toast__note {
+  font-size: 0.64rem;
+  color: #bbb;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* Responsive — hide on very small screens (optional) */
+@media (max-width: 420px) {
+  .sale-toast {
+    width: calc(100vw - 2rem);
+    right: 1rem;
+    bottom: 1rem;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE — FORMS &amp; QR
+══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .form-row { grid-template-columns: 1fr; }
+  .checkout-qr-wrapper { flex-direction: column; text-align: center; }
+  .checkout-qr-steps { align-items: center; }
+}
+@media (max-width: 480px) {
+  .checkout-bill-card { padding: 0.9rem; }
+}
+
+

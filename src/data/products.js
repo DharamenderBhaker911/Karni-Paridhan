@@ -53,6 +53,7 @@ Object.entries(rawImages).forEach(([path, url]) => {
 });
 
 // Category configs for generating realistic product names, pricing, and tags
+// Prices are AFTER 75% off — originals are ~4x (before discount)
 const categoryConfig = {
   Anarkali: {
     titles: [
@@ -67,8 +68,10 @@ const categoryConfig = {
       "Pastel Elegance Anarkali Set",
       "Bridal Heritage Anarkali",
     ],
-    basePrice: 4499,
-    priceStep: 350,
+    // Sale price range: ₹700 – ₹2000 (after 75% off)
+    basePrice: 700,
+    priceStep: 130,
+    priceRange: 1300,   // max - min
     badges: ["New", "Festive", "Best Seller", "Popular", "Signature"],
     tones: [
       "Pure silk flare with intricate neck embroidery",
@@ -88,8 +91,10 @@ const categoryConfig = {
       "Pastel Cotton Silk Kurta Set",
       "Royal Velvet Kurta Ensemble",
     ],
-    basePrice: 3499,
-    priceStep: 300,
+    // Sale price range: ₹500 – ₹1600 (after 75% off)
+    basePrice: 500,
+    priceStep: 110,
+    priceRange: 1100,   // max - min
     badges: ["Best Seller", "New", "Limited", "Trending"],
     tones: [
       "Comfortable cotton silk with delicate embroidery",
@@ -109,8 +114,10 @@ const categoryConfig = {
       "Sky Blue Silk Rajputi Poshak",
       "Velvet Regal Rajputi Poshak",
     ],
-    basePrice: 12999,
-    priceStep: 850,
+    // Sale price range: ₹1200 – ₹2500 (after 75% off)
+    basePrice: 1200,
+    priceStep: 130,
+    priceRange: 1300,   // max - min
     badges: ["Signature", "Royal Edit", "Exclusive", "Heritage"],
     tones: [
       "Pure satin base with antique gold work",
@@ -124,8 +131,12 @@ export const products = Object.values(productMap).map((prod, idx) => {
   const cfg = categoryConfig[prod.category] || categoryConfig["Anarkali"];
   const titleTemplate = cfg.titles[idx % cfg.titles.length];
   const name = `${titleTemplate} (${prod.folder})`;
-  const price = cfg.basePrice + ((idx * cfg.priceStep) % 3500);
-  const originalPrice = Math.round(price * 1.25);
+
+  // Sale price (after 75% off) within the defined range
+  const salePrice = cfg.basePrice + ((idx * cfg.priceStep) % cfg.priceRange);
+  // Original price = sale price / 0.25  → 4× (75% off means you save 75%)
+  const originalPrice = Math.round(salePrice * 4);
+
   const badge = cfg.badges[idx % cfg.badges.length];
   const tone = cfg.tones[idx % cfg.tones.length];
 
@@ -133,7 +144,7 @@ export const products = Object.values(productMap).map((prod, idx) => {
     id: prod.id,
     name: name,
     category: prod.category,
-    price: price,
+    price: salePrice,
     originalPrice: originalPrice,
     image: prod.images[0],
     gallery: prod.images,

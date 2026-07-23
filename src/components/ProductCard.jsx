@@ -38,14 +38,14 @@ function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
         )}
 
         {/* Wishlist button */}
-        <button
+        {/* <button
           type="button"
           className={`wishlist-btn ${wishlisted ? "active" : ""}`}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
           onClick={(e) => { e.stopPropagation(); setWishlisted((v) => !v); }}
         >
           {wishlisted ? "❤️" : "🤍"}
-        </button>
+        </button> */}
 
         {/* Subtle tap/click hint overlay */}
         <div className="product-tap-hint" aria-hidden="true">
