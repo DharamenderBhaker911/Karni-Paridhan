@@ -87,7 +87,6 @@ const paymentLogos = [
 
 const trustBadges = [
   { icon: "🚚", title: "Free Shipping",  sub: "On orders ₹999+" },
-  { icon: "💳", title: "COD Available",  sub: "Pay on delivery" },
   { icon: "🔄", title: "Easy Returns",   sub: "7-day hassle-free" },
   { icon: "🔒", title: "Secure Payments",sub: "100% encrypted" },
 ];
@@ -170,7 +169,6 @@ function Footer() {
                     <img src={p.src} alt={p.alt} />
                   </div>
                 ))}
-                <div className="footer-payment-chip footer-payment-text">COD</div>
               </div>
             </div>
           </div>

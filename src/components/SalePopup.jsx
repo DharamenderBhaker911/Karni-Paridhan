@@ -20,47 +20,44 @@ function SalePopup({ onClose }) {
 
   return (
     <div
-      className={`sale-toast ${closing ? "sale-toast--out" : "sale-toast--in"}`}
-      role="complementary"
+      className={`sale-modal-overlay ${closing ? "sale-modal-overlay--out" : "sale-modal-overlay--in"}`}
+      role="dialog"
+      aria-modal="true"
       aria-label="Sale Offer"
+      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
     >
-      {/* Close */}
-      <button
-        type="button"
-        className="sale-toast__close"
-        onClick={handleClose}
-        aria-label="Dismiss"
-      >
-        ✕
-      </button>
+      <div className="sale-modal">
+        {/* Close */}
+        <button
+          type="button"
+          className="sale-modal__close"
+          onClick={handleClose}
+          aria-label="Dismiss"
+        >
+          ✕
+        </button>
 
-      {/* Tag line */}
-      <p className="sale-toast__eyebrow">🏷 Limited Time Offer</p>
+        {/* Tag line */}
+        <p className="sale-modal__eyebrow">🏷 Limited Time Offer</p>
 
-      {/* Big % */}
-      <div className="sale-toast__badge-row">
-        <span className="sale-toast__pct">75<sup>%</sup></span>
-        <span className="sale-toast__off">OFF</span>
+        {/* Big % */}
+        <div className="sale-modal__badge-row">
+          <span className="sale-modal__pct">75<sup>%</sup></span>
+          <span className="sale-modal__off">OFF</span>
+        </div>
+
+        <p className="sale-modal__headline serif">Royal Collection<br /><em>at Unbeatable Prices</em></p>
+
+        <button
+          type="button"
+          className="sale-modal__cta"
+          onClick={handleClose}
+        >
+          Shop Now →
+        </button>
+
+        <p className="sale-modal__note">Free delivery · Easy returns</p>
       </div>
-
-      <p className="sale-toast__headline serif">Royal Collection<br /><em>at Unbeatable Prices</em></p>
-
-      {/* Price list */}
-      {/* <ul className="sale-toast__list">
-        <li><span>👑 Poshak</span><span>₹1,200 – ₹2,500</span></li>
-        <li><span>🌸 Anarkali</span><span>₹700 – ₹2,000</span></li>
-        <li><span>✨ Kurta Set</span><span>₹500 – ₹1,600</span></li>
-      </ul> */}
-
-      <button
-        type="button"
-        className="sale-toast__cta"
-        onClick={handleClose}        // Got tho the collection 
-      >
-        Shop Now →
-      </button>
-
-      <p className="sale-toast__note">Free delivery · Easy returns</p>
     </div>
   );
 }

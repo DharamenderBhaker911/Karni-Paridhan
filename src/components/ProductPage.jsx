@@ -237,7 +237,6 @@ function QuantitySelector({ qty, setQty }) {
 function TrustBadges() {
   const badges = [
     { icon: <Ico.Truck />,  label: "Free Shipping",  sub: "On all orders" },
-    { icon: <Ico.COD />,   label: "Cash on Delivery", sub: "Pay at door" },
     { icon: <Ico.Return />, label: "Easy Returns",    sub: "7-day policy" },
     { icon: <Ico.Lock />,   label: "Secure Payment",  sub: "100% encrypted" },
   ];
