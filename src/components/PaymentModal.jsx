@@ -2,21 +2,21 @@ import { useState, useRef, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { formatPrice } from "../utils/format";
 
-const UPI_ID     = "paytmQR6up87h@ptys";
+const UPI_ID = "paytmQR6up87h@ptys";
 const PAYEE_NAME = "Shree Laddu Gopal Sweets";
-const GST_RATE   = 0.18;
-const SHOP_WA    = "916376614836";
+const GST_RATE = 0.18;
+const SHOP_WA = "916376614836";
 
-const paytmLogo   = "https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg";
-const gpayLogo    = "https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg";
+const paytmLogo = "https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg";
+const gpayLogo = "https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg";
 const phonepeLogo = "https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg";
 
 // Steps: address → payment → sending → success
 function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess }) {
-  const [step, setStep]          = useState("address");
+  const [step, setStep] = useState("address");
   const [sameAsPhone, setSameAs] = useState(true);
-  const [formErrors, setErrors]  = useState({});
-  const [form, setForm]          = useState({
+  const [formErrors, setErrors] = useState({});
+  const [form, setForm] = useState({
     name: "", phone: "", whatsapp: "",
     address: "", city: "", state: "", pincode: "",
   });
@@ -25,14 +25,14 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     () => "#KP" + Date.now().toString(36).toUpperCase().slice(-6)
   );
 
-  const qrRef      = useRef(null);
+  const qrRef = useRef(null);
   const payBodyRef = useRef(null);
 
-  const base   = subtotal;
-  const gst    = Math.round(base * GST_RATE);
-  const cgst   = Math.round(gst / 2);
-  const sgst   = gst - cgst;
-  const total  = base + gst;
+  const base = subtotal;
+  const gst = Math.round(base * GST_RATE);
+  const cgst = Math.round(gst / 2);
+  const sgst = gst - cgst;
+  const total = base + gst;
   const upiUrl = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${total.toFixed(2)}&tn=${orderId}`;
 
   // Customer WhatsApp number
@@ -64,7 +64,7 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     if (/Android/i.test(navigator.userAgent))
       return `intent://pay?${p}#Intent;scheme=upi;package=${pkg};end`;
     if (/iPhone|iPad/i.test(navigator.userAgent)) {
-      if (pkg.includes("paytm"))   return `paytmmp://pay?${p}`;
+      if (pkg.includes("paytm")) return `paytmmp://pay?${p}`;
       if (pkg.includes("phonepe")) return `phonepe://pay?${p}`;
       return `gpay://upi/pay?${p}`;
     }
@@ -148,18 +148,18 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     const svg = document.querySelector(".pm-qr-svg-el");
     if (!svg) return;
     const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas  = document.createElement("canvas");
-    canvas.width  = 300;
+    const canvas = document.createElement("canvas");
+    canvas.width = 300;
     canvas.height = 300;
-    const ctx     = canvas.getContext("2d");
-    const img     = new Image();
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
     img.onload = () => {
       ctx.fillStyle = "#fff";
       ctx.fillRect(0, 0, 300, 300);
       ctx.drawImage(img, 0, 0, 300, 300);
-      const a    = document.createElement("a");
+      const a = document.createElement("a");
       a.download = `KarniParidhan-QR-${orderId}.png`;
-      a.href     = canvas.toDataURL("image/png");
+      a.href = canvas.toDataURL("image/png");
       a.click();
     };
     img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
@@ -172,13 +172,13 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
 
   function validate() {
     const e = {};
-    if (!form.name.trim())                                        e.name     = "Full name required";
-    if (!/^\d{10}$/.test(form.phone.trim()))                     e.phone    = "Valid 10-digit number required";
-    if (!sameAsPhone && !/^\d{10}$/.test(form.whatsapp.trim()))  e.whatsapp = "Valid 10-digit WhatsApp number";
-    if (!form.address.trim())                                     e.address  = "Address required";
-    if (!form.city.trim())                                        e.city     = "City required";
-    if (!form.state.trim())                                       e.state    = "State required";
-    if (!/^\d{6}$/.test(form.pincode.trim()))                    e.pincode  = "Valid 6-digit PIN required";
+    if (!form.name.trim()) e.name = "Full name required";
+    if (!/^\d{10}$/.test(form.phone.trim())) e.phone = "Valid 10-digit number required";
+    if (!sameAsPhone && !/^\d{10}$/.test(form.whatsapp.trim())) e.whatsapp = "Valid 10-digit WhatsApp number";
+    if (!form.address.trim()) e.address = "Address required";
+    if (!form.city.trim()) e.city = "City required";
+    if (!form.state.trim()) e.state = "State required";
+    if (!/^\d{6}$/.test(form.pincode.trim())) e.pincode = "Valid 6-digit PIN required";
     return e;
   }
 
@@ -198,12 +198,12 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
           <div className="pm-success__icon">
             <svg viewBox="0 0 52 52">
               <circle className="pm-success__circle" cx="26" cy="26" r="24" fill="none" />
-              <path   className="pm-success__tick"   fill="none" d="M14 27l8 8 16-16" />
+              <path className="pm-success__tick" fill="none" d="M14 27l8 8 16-16" />
             </svg>
           </div>
           <h2 className="pm-success__title">Order Placed! 🎉</h2>
-          <p  className="pm-success__id">{orderId}</p>
-          <p  className="pm-success__msg">
+          <p className="pm-success__id">{orderId}</p>
+          <p className="pm-success__msg">
             Thank you, <strong>{form.name}</strong>!<br />
             Your bill has been sent to your WhatsApp.<br />
             Delivering to <strong>{form.city}, {form.state}</strong>.
@@ -223,9 +223,9 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
         <div className="pm-sending">
           <div className="pm-sending__spinner" />
           <h3 className="pm-sending__title">Processing your order…</h3>
-          <p  className="pm-sending__sub">Sending your bill to WhatsApp 📲</p>
-          <p  className="pm-sending__wa">+91 {customerWa}</p>
-          <p  className="pm-sending__note">Please allow WhatsApp to open</p>
+          <p className="pm-sending__sub">Sending your bill to WhatsApp 📲</p>
+          <p className="pm-sending__wa">+91 {customerWa}</p>
+          <p className="pm-sending__note">Please allow WhatsApp to open</p>
         </div>
       </div>
     );
