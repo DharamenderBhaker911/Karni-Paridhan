@@ -26,12 +26,6 @@ function Hero() {
         <p className="hero-sub motion-rise motion-rise-d3">
           Welcome to Karni Paridhan — where tradition meets timeless elegance. Discover our exclusive collection of premium Rajputi posaks, handcrafted Anarkalis, and sophisticated Kurta sets, each piece narrating a story of heritage and unmatched craftsmanship.
         </p>
-
-        <div className="hero-actions motion-rise motion-rise-d3">
-          <a href="#products" className="btn-primary hero-cta-primary">
-            ✦ Shop Collection
-          </a>
-        </div>
       </div>
 
       {/* Bottom Trust Bar */}

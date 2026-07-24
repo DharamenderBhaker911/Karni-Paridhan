@@ -26,6 +26,11 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
     () => "#KP" + Date.now().toString(36).toUpperCase().slice(-6)
   );
 
+  // ── 2-minute QR Timer ─────────────────────────────
+  const TIMER_SECONDS = 120;
+  const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
+  const timerRef = useRef(null);
+
   const qrRef = useRef(null);
   const payBodyRef = useRef(null);
   const { mutate: createOrder } = useCreateOrder();
@@ -39,6 +44,28 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
 
   // Customer WhatsApp number
   const customerWa = sameAsPhone ? form.phone : form.whatsapp;
+
+  // ── Start / reset timer when payment step opens ───
+  useEffect(() => {
+    if (step === "payment") {
+      setTimeLeft(TIMER_SECONDS);
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            // Time expired → close modal, go to home
+            onClose?.();
+            window.location.hash = "/";
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      clearInterval(timerRef.current);
+    }
+    return () => clearInterval(timerRef.current);
+  }, [step]);
 
   // Auto-scroll to QR section after 1.5s on payment page
   useEffect(() => {
@@ -124,6 +151,9 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
   }
 
   function openCustomerWhatsApp() {
+    // Stop the timer immediately — payment confirmed
+    clearInterval(timerRef.current);
+
     // Open WhatsApp to CUSTOMER with their order bill
     const url = `https://wa.me/91${customerWa}?text=${buildCustomerMsg()}`;
     window.open(url, "_blank");
@@ -152,8 +182,8 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
   }
 
   function handleUpiClick() {
-    // When user taps a UPI app → transition to "sending" step
-    // The "sending" useEffect will fire openCustomerWhatsApp automatically
+    // Payment confirmed via UPI app tap → stop timer, transition to sending
+    clearInterval(timerRef.current);
     setTimeout(() => setStep("sending"), 600);
   }
 
@@ -202,6 +232,14 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
     setErrors({});
     setStep("payment");
   }
+
+  /* ── Timer helpers ─────────────────────────────── */
+  const timerMins = String(Math.floor(timeLeft / 60)).padStart(2, "0");
+  const timerSecs = String(timeLeft % 60).padStart(2, "0");
+  // Ring animation: stroke-dashoffset goes 0 → 283 as time runs out
+  const RING_CIRCUMFERENCE = 283; // 2π × 45
+  const ringOffset = RING_CIRCUMFERENCE * (1 - timeLeft / TIMER_SECONDS);
+  const timerUrgent = timeLeft <= 30;
 
   /* ── SUCCESS ───────────────────────────────────── */
   if (step === "success") {
@@ -260,6 +298,8 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
             <span>🔒</span>
           </div>
 
+
+
           {/* SECTION 1: Amount + GST (visible first) */}
           <div className="pm-pay__bill-section">
             <p className="pm-pay__bill-eyebrow">Order Summary</p>
@@ -312,10 +352,21 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
                   className="pm-qr-svg-el"
                 />
               </div>
+              <p style={{ color: "#ff4444", fontWeight: "700", fontSize: "1.1rem", margin: "12px 0 6px 0" }}>
+                ⏱ QR Valid for: {timerMins}:{timerSecs}
+              </p>
               <p className="pm-pay__qr-upi">UPI: {UPI_ID}</p>
               <p className="pm-pay__qr-hint">Scan with any UPI app</p>
               <button className="pm-pay__download-btn" onClick={downloadQR}>⬇ Download QR</button>
             </div>
+
+            {/* "I've Paid" confirmation button — triggers WhatsApp + success */}
+            <button
+              className="pm-pay__confirm-btn"
+              onClick={handleUpiClick}
+            >
+              ✅ I've Completed Payment
+            </button>
 
             <div className="pm-pay__or"><span>or open app directly</span></div>
 
@@ -380,7 +431,7 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
               <div className="pm-field-row">
                 <div className={`pm-field ${formErrors.name ? "pm-field--err" : ""}`}>
                   <label htmlFor="pm-name">Full Name *</label>
-                  <input id="pm-name" type="text" placeholder="e.g. Priya Sharma"
+                  <input id="pm-name" type="text" placeholder="Enter Your Full Name"
                     value={form.name} onChange={e => setField("name", e.target.value)} />
                   {formErrors.name && <p className="pm-err">{formErrors.name}</p>}
                 </div>
@@ -412,7 +463,7 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
 
               <div className={`pm-field ${formErrors.address ? "pm-field--err" : ""}`}>
                 <label htmlFor="pm-addr">Street / House / Flat *</label>
-                <input id="pm-addr" type="text" placeholder="e.g. 45, Shivaji Nagar"
+                <input id="pm-addr" type="text" placeholder="House No."
                   value={form.address} onChange={e => setField("address", e.target.value)} />
                 {formErrors.address && <p className="pm-err">{formErrors.address}</p>}
               </div>
@@ -420,13 +471,13 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
               <div className="pm-field-row">
                 <div className={`pm-field ${formErrors.city ? "pm-field--err" : ""}`}>
                   <label htmlFor="pm-city">City *</label>
-                  <input id="pm-city" type="text" placeholder="Jaipur"
+                  <input id="pm-city" type="text"
                     value={form.city} onChange={e => setField("city", e.target.value)} />
                   {formErrors.city && <p className="pm-err">{formErrors.city}</p>}
                 </div>
                 <div className={`pm-field ${formErrors.state ? "pm-field--err" : ""}`}>
                   <label htmlFor="pm-state">State *</label>
-                  <input id="pm-state" type="text" placeholder="Rajasthan"
+                  <input id="pm-state" type="text"
                     value={form.state} onChange={e => setField("state", e.target.value)} />
                   {formErrors.state && <p className="pm-err">{formErrors.state}</p>}
                 </div>

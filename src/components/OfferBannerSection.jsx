@@ -77,10 +77,6 @@ export default function OfferBannerSection() {
             <span className="offer-timer-label">Secs</span>
           </div>
         </div>
-
-        <a href="#products" className="offer-banner-cta btn-gold">
-          ✦ Shop Sale Now
-        </a>
       </div>
     </section>
   );
