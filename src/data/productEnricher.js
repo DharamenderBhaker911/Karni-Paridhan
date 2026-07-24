@@ -30,6 +30,8 @@ const COLOR_PALETTES = {
     { name: "Crimson", hex: "#9B1B2A", availableSizes: ["S","M","L","XL","XXL"] },
     { name: "Teal",    hex: "#2C7873", availableSizes: ["XS","S","M","L","XL"] },
   ],
+  // Purse has no colour palette (colour = what you see in the photo)
+  Purse: [],
 };
 
 const HIGHLIGHTS_MAP = {
@@ -64,6 +66,14 @@ const HIGHLIGHTS_MAP = {
     { icon: "✂️", label: "Straight Cut Fit" },
     { icon: "🌸", label: "Printed Dupatta" },
     { icon: "🫧", label: "Gentle Hand Wash" },
+  ],
+  Purse: [
+    { icon: "👜", label: "Premium Material" },
+    { icon: "✨", label: "Stylish Design" },
+    { icon: "📱", label: "Multiple Pockets" },
+    { icon: "🔗", label: "Adjustable Strap" },
+    { icon: "🔒", label: "Secure Closure" },
+    { icon: "🚚", label: "Easy to Carry" },
   ],
 };
 
@@ -100,6 +110,14 @@ const FABRIC_CARE_MAP = {
     { label: "Fit",      value: "Straight / Regular Cut" },
     { label: "Wash",     value: "Hand Wash Cold / Dry Clean" },
   ],
+  Purse: [
+    { label: "Material", value: "Faux Leather / Canvas / Nylon" },
+    { label: "Closure",  value: "Zipper / Magnetic Snap / Flap" },
+    { label: "Strap",    value: "Adjustable / Detachable" },
+    { label: "Hardware", value: "Gold-tone / Silver-tone" },
+    { label: "Interior", value: "Multiple Pockets" },
+    { label: "Care",     value: "Wipe Clean with Dry Cloth" },
+  ],
 };
 
 const SPECS_MAP = {
@@ -135,6 +153,14 @@ const SPECS_MAP = {
     ["Includes",   "Kurta + Pant + Dupatta"],
     ["Packaging",  "Branded Gift Bag"],
   ],
+  Purse: [
+    ["Material",   "Faux Leather / Canvas / Nylon"],
+    ["Closure",    "Zipper / Magnetic / Flap"],
+    ["Strap",      "Adjustable / Detachable"],
+    ["Hardware",   "Premium Metal Hardware"],
+    ["Pockets",    "Multiple Inner & Outer"],
+    ["Packaging",  "Branded Gift Box"],
+  ],
 };
 
 const FAQS_MAP = {
@@ -164,6 +190,13 @@ const FAQS_MAP = {
     { q: "Can I hand wash this suit?", a: "Yes, gentle hand wash in cold water is recommended. For embroidered pieces, dry cleaning is advised." },
     { q: "What is the return or exchange policy?", a: "We offer a 7-day easy return or exchange policy for all products." },
     { q: "Is custom stitching available?", a: "Yes, please mention your measurements in the order notes and we will accommodate your request." },
+  ],
+  Purse: [
+    { q: "What is this bag made of?", a: "Our bags are crafted from premium faux leather, canvas, or nylon depending on the style." },
+    { q: "Is there a strap included?", a: "Yes, most bags include at least one strap — either a top handle, shoulder strap, or adjustable crossbody strap." },
+    { q: "How do I clean the bag?", a: "Wipe gently with a soft dry cloth. Avoid soaking in water or using harsh chemicals." },
+    { q: "What is the return policy?", a: "We offer a 7-day easy return or exchange policy for all products." },
+    { q: "Is this suitable as a gift?", a: "Absolutely! All bags come in branded gift-ready packaging, perfect for gifting." },
   ],
 };
 
@@ -210,6 +243,27 @@ const SIZE_GUIDE = {
 
 export function enrichProduct(product) {
   const cat = product.category;
+
+  // ── Purse: no colours, no size guide, bag-specific enrichment ───────────
+  if (cat === "Purse" || product.isPurse) {
+    return {
+      ...product,
+      tagline: "Style that speaks for itself.",
+      rating: (4.4 + Math.random() * 0.5).toFixed(1),
+      reviewCount: 40 + Math.floor(Math.random() * 200),
+      colors: [],             // No colour swatches
+      colorGalleries: {},     // No colour galleries
+      highlights: HIGHLIGHTS_MAP.Purse,
+      fabricCare: FABRIC_CARE_MAP.Purse,
+      specs: SPECS_MAP.Purse,
+      faqs: FAQS_MAP.Purse,
+      reviews: REVIEWS_DATA,
+      sizeGuide: null,        // No size guide for bags
+      deliveryDate: getDeliveryDate(),
+      sizes: [],              // No size selector
+    };
+  }
+
   return {
     ...product,
     tagline: {

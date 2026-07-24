@@ -627,24 +627,20 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
               </div>
             </div>
 
-            {/* Color */}
-            <ColorSelector
-              colors={product.colors}
-              selected={selectedColor}
-              onSelect={c => { setSelectedColor(c); setSelectedSize(null); }}
-            />
 
-            {/* Size */}
-            <div ref={sizeRef}>
-              <SizeSelector
-                sizes={product.sizes}
-                selected={selectedSize}
-                onSelect={setSelectedSize}
-                availableSizes={selectedColor?.availableSizes}
-                sizeError={sizeError}
-                onGuideOpen={() => setShowSizeGuide(true)}
-              />
-            </div>
+            {/* Size — hidden for Purse/bags */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div ref={sizeRef}>
+                <SizeSelector
+                  sizes={product.sizes}
+                  selected={selectedSize}
+                  onSelect={setSelectedSize}
+                  availableSizes={selectedColor?.availableSizes}
+                  sizeError={sizeError}
+                  onGuideOpen={() => setShowSizeGuide(true)}
+                />
+              </div>
+            )}
 
             {/* Qty */}
             <QuantitySelector qty={qty} setQty={setQty} />

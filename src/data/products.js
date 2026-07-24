@@ -36,6 +36,8 @@ Object.entries(rawImages).forEach(([path, url]) => {
     categoryName = "Rajputi Posak";
   } else if (catLower === "suit") {
     categoryName = "Suit";
+  } else if (catLower === "purse") {
+    categoryName = "Purse";
   } else {
     return; // Ignore non-product asset folders
   }
@@ -290,6 +292,138 @@ const SUIT_PRODUCTS = {
   },
 };
 
+// ─── Purse: Rich product details per folder ─────────────────────────────────
+const PURSE_PRODUCTS = {
+  "1": {
+    name: "Dhaaga Mustard Suede Round Crossbody Bag",
+    details: "Trendy circular/round shape with premium mustard-yellow suede-finish material. Features a quick-access front slip pocket and a beautiful contrasting green tassel charm with a wooden bead. Elegant metal 'Dhaaga' logo plate on the front.",
+    badge: "Best Seller",
+    price: 699,
+    originalPrice: 2799,
+  },
+  "2": {
+    name: "Dhaaga Scenic Embroidered Canvas Handbag",
+    details: "Beautifully crafted landscape painting with 3D floral and tree embroidery on a durable canvas body. Sturdy brown faux-leather top handles. A perfect blend of traditional handiwork and modern utility. Subtle 'Dhaaga' metal plate tag on the front.",
+    badge: "Signature",
+    price: 849,
+    originalPrice: 3399,
+  },
+  "3": {
+    name: "Lino Perros Dual-Tone Satchel with Silk Scarf",
+    details: "Sophisticated tan and white color-block combination with a stylish printed silk-like scarf wrapped beautifully around the handle. Features a single top handle and a thick branded woven shoulder strap for crossbody wear. Premium silver-tone hardware.",
+    badge: "New",
+    price: 799,
+    originalPrice: 3199,
+  },
+  "4": {
+    name: "Lino Perros Black Contrast-Stitch Tote Bag",
+    details: "Sleek black exterior with striking white contrast stitching. Features a convenient front zipper pocket with a long pull tab. Side belt and buckle accents for an edgy structured look. Comfortable dual shoulder straps.",
+    badge: "Popular",
+    price: 749,
+    originalPrice: 2999,
+  },
+  "5": {
+    name: "Lino Perros Minimalist Black Nylon Sling Bag",
+    details: "Lightweight and durable nylon/fabric body, perfect for daily use. Curved top silhouette with a subtle front flap detail. Adjustable woven fabric strap with silver hardware clips. Secure top zipper closure to keep essentials safe.",
+    badge: "Trending",
+    price: 599,
+    originalPrice: 2399,
+  },
+  "6": {
+    name: "Lino Perros Taupe Structured Shoulder Tote",
+    details: "Clean taupe exterior with a structured professional silhouette. Contrasting brown straps that extend stylishly down the body of the bag. Fine white contrast stitching along the base and straps. Large main compartment ideal for work or everyday essentials.",
+    badge: "Best Seller",
+    price: 849,
+    originalPrice: 3399,
+  },
+  "7": {
+    name: "Lino Perros Coffee Brown Flap Messenger Bag",
+    details: "Rich coffee brown faux-leather finish with a smooth flap closure. Includes a wide woven strap for comfort and a slim adjustable strap for a classic look. Features a matching removable luggage-tag style charm. Metallic Lino Perros logo centered on the front flap.",
+    badge: "New",
+    price: 749,
+    originalPrice: 2999,
+  },
+  "8": {
+    name: "Lino Perros Beige Classic Trapezoid Tote",
+    details: "Elegant trapezoid silhouette offering a roomy interior. Neutral beige body complemented by rich brown shoulder straps. Luxurious gold-tone rectangular hardware connecting the straps. Perfect for both office wear and casual outings.",
+    badge: "Signature",
+    price: 899,
+    originalPrice: 3599,
+  },
+  "9": {
+    name: "Lino Perros Canvas Tote with Whipstitch Detailing",
+    details: "Stylish combination of breathable beige canvas and brown faux-leather trims with a distinctive curved top edge. Easily accessible front slip pocket secured with a braided/whipstitch detailed leather flap. Long comfortable shoulder straps integrated seamlessly into the design.",
+    badge: "Popular",
+    price: 799,
+    originalPrice: 3199,
+  },
+  "10": {
+    name: "Lino Perros Beige Multi-Pocket Utility Sling Bag",
+    details: "Multiple zipped compartments including a front pouch for easy organization. Matching tassel details on the zipper pulls. Features a short top handle and a detachable adjustable woven crossbody strap. Soft lightweight and durable fabric ideal for travel or busy days.",
+    badge: "Trending",
+    price: 649,
+    originalPrice: 2599,
+  },
+  "11": { name: "Lino Perros Coffee Brown Woven Crossbody Bag", details: "Textured woven exterior in rich coffee brown with adjustable crossbody strap and premium hardware accents.", badge: "New", price: 699, originalPrice: 2799 },
+  "12": { name: "Lino Perros Beige Bow-Accent Handbag", details: "Elegant beige handbag with a chic bow accent and structured silhouette. Spacious interior with inner pockets.", badge: "Popular", price: 749, originalPrice: 2999 },
+  "13": { name: "Lino Perros Monroe Beige Accent Tote Bag", details: "Classic Monroe-style tote in beige with signature accent detailing and comfortable dual carry straps.", badge: "Best Seller", price: 799, originalPrice: 3199 },
+  "14": { name: "Lino Perros Avril Classic Beige Tote with Scarf", details: "Timeless Avril-style tote with a matching printed scarf accessory tied on the handle for a chic finish.", badge: "Signature", price: 849, originalPrice: 3399 },
+  "15": { name: "Lino Perros Beige Knot-Handle Slouch Bag", details: "Relaxed slouch silhouette with stylish knotted top handles and a soft, flexible body in neutral beige.", badge: "Trending", price: 699, originalPrice: 2799 },
+  "16": { name: "Lino Perros Dual-Tone Flap Crossbody Bag", details: "Sophisticated dual-tone color-blocked flap bag with a secure magnetic closure and adjustable strap.", badge: "New", price: 749, originalPrice: 2999 },
+  "17": { name: "Lino Perros Avril Dark Brown Classic Tote", details: "Rich dark brown Avril-style tote with structured body, gold-tone hardware, and spacious interior.", badge: "Popular", price: 849, originalPrice: 3399 },
+  "18": { name: "Lino Perros Off-White Structured Handbag", details: "Crisp off-white structured handbag with clean lines and premium finishing. Versatile for both formal and casual use.", badge: "Best Seller", price: 799, originalPrice: 3199 },
+  "19": { name: "Lino Perros Coffee Textured Top Handle Bag", details: "Textured coffee-tone top handle bag with contrasting trims and a roomy interior compartment.", badge: "New", price: 749, originalPrice: 2999 },
+  "20": { name: "Dhaaga Multicolor Embroidered Shoulder Bag", details: "Vibrant multicolor embroidered shoulder bag with artisanal threadwork and comfortable padded straps.", badge: "Signature", price: 899, originalPrice: 3599 },
+  "21": { name: "Dhaaga Boho Printed Canvas Tote", details: "Boho-chic printed canvas tote with earthy tones and sturdy handles. Perfect for everyday casual outings.", badge: "Popular", price: 699, originalPrice: 2799 },
+  "22": { name: "Dhaaga Woven Jute Tote Bag", details: "Eco-friendly woven jute tote with colorful embroidered accents. Spacious and sustainable.", badge: "Trending", price: 599, originalPrice: 2399 },
+  "23": { name: "Designer Floral Embroidered Clutch Bag", details: "Compact floral embroidered clutch with a metal frame clasp. Elegant enough for festive occasions.", badge: "New", price: 499, originalPrice: 1999 },
+  "24": { name: "Lino Perros Cherry Red Structured Tote", details: "Bold cherry red structured tote with gold-tone hardware and spacious dual compartments.", badge: "Best Seller", price: 849, originalPrice: 3399 },
+  "25": { name: "Lino Perros Tan Leather-Trim Tote", details: "Classic tan tote with premium leather trims and comfortable shoulder straps.", badge: "Popular", price: 799, originalPrice: 3199 },
+  "26": { name: "Lino Perros Tan Trapezoid Shoulder Bag", details: "Elegant trapezoid-shaped shoulder bag in tan with signature Lino Perros hardware accents.", badge: "Signature", price: 849, originalPrice: 3399 },
+  "27": { name: "Lino Perros Beige Flap Shoulder Bag", details: "Minimalist beige flap shoulder bag with magnetic closure and adjustable strap.", badge: "New", price: 749, originalPrice: 2999 },
+  "28": { name: "Lino Perros Beige Woven Detail Tote", details: "Stylish beige tote with woven panel detailing and gold-tone ring connectors.", badge: "Trending", price: 799, originalPrice: 3199 },
+  "29": { name: "Lino Perros Coffee Zipper Sling Bag", details: "Compact coffee-tone sling bag with multiple zip compartments and an adjustable crossbody strap.", badge: "Popular", price: 649, originalPrice: 2599 },
+  "30": { name: "Lino Perros Coffee Flap Crossbody Bag", details: "Smooth coffee-finish faux leather flap crossbody with premium buckle hardware.", badge: "New", price: 699, originalPrice: 2799 },
+  "31": { name: "Lino Perros Beige Canvas Utility Sling", details: "Lightweight beige canvas sling with practical compartments perfect for daily essentials.", badge: "Best Seller", price: 599, originalPrice: 2399 },
+  "32": { name: "Lino Perros Off-White Flap Sling Bag", details: "Clean off-white flap sling with minimalist design and adjustable strap.", badge: "Popular", price: 649, originalPrice: 2599 },
+  "33": { name: "Ethnic Embroidered Potli Bag", details: "Traditional potli bag with rich ethnic embroidery. Perfect for festive and wedding occasions.", badge: "Festive", price: 549, originalPrice: 2199 },
+  "34": { name: "Dhaaga Indigo Block Print Shoulder Bag", details: "Beautiful indigo block-printed shoulder bag with a structured body and wooden button closure.", badge: "Signature", price: 749, originalPrice: 2999 },
+  "35": { name: "Dhaaga Printed Sling Bag with Tassel", details: "Artisanal printed sling bag adorned with colorful tassel charm and adjustable fabric strap.", badge: "New", price: 649, originalPrice: 2599 },
+  "36": { name: "Dhaaga Ethnic Printed Handbag", details: "Vibrant ethnic-printed handbag with sturdy handles and spacious interior.", badge: "Popular", price: 699, originalPrice: 2799 },
+  "37": { name: "Handmade Embroidered Clutch Purse", details: "Hand-embroidered clutch purse with colorful floral motifs and a zip closure.", badge: "Trending", price: 499, originalPrice: 1999 },
+  "38": { name: "Handmade Mini Bucket Bag", details: "Cute mini bucket bag with a drawstring top and crossbody strap. A fun everyday companion.", badge: "New", price: 549, originalPrice: 2199 },
+  "39": { name: "Dhaaga Rust Printed Canvas Sling", details: "Rust-toned canvas sling with ethnic motif prints and metal snap closure.", badge: "Best Seller", price: 649, originalPrice: 2599 },
+  "40": { name: "Dhaaga Boho Embroidered Tote", details: "Bohemian embroidered tote with earthy tones and practical double handles.", badge: "Signature", price: 749, originalPrice: 2999 },
+  "41": { name: "Dhaaga Patchwork Shoulder Bag", details: "Charming patchwork-design shoulder bag combining multiple fabrics for a unique artisanal look.", badge: "Popular", price: 699, originalPrice: 2799 },
+  "42": { name: "Ethnic Potli Drawstring Bag", details: "Classic potli drawstring bag with rich fabric and decorative tassel. Ideal for festive styling.", badge: "Festive", price: 499, originalPrice: 1999 },
+  "43": { name: "Round Sling Saddle Bag", details: "Modern round saddle sling bag with buckle flap and adjustable leather strap.", badge: "Trending", price: 599, originalPrice: 2399 },
+  "44": { name: "Dhaaga Structured Flap Mini Bag", details: "Compact structured flap mini bag with contrasting trim and signature metal logo.", badge: "New", price: 649, originalPrice: 2599 },
+  "45": { name: "Woven Raffia Shoulder Bag", details: "Chic woven raffia shoulder bag with leather trim handles. Perfect for summer outings.", badge: "Popular", price: 699, originalPrice: 2799 },
+  "46": { name: "Beaded Embroidered Clutch", details: "Glamorous beaded embroidered clutch for parties and festive evenings.", badge: "Festive", price: 549, originalPrice: 2199 },
+  "47": { name: "Classic Structured Handbag", details: "Timeless structured handbag in neutral tones with top handle and detachable strap.", badge: "Best Seller", price: 799, originalPrice: 3199 },
+  "48": { name: "Large Shopper Tote Bag", details: "Spacious shopper tote with reinforced handles and inner organizer pockets.", badge: "New", price: 749, originalPrice: 2999 },
+  "49": { name: "Mini Crossbody Compact Bag", details: "Compact mini crossbody with zip closure and long adjustable strap. Great for outings.", badge: "Trending", price: 599, originalPrice: 2399 },
+  "50": { name: "Half-Moon Crescent Shoulder Bag", details: "Trendy half-moon crescent shaped shoulder bag with leather strap.", badge: "Popular", price: 649, originalPrice: 2599 },
+  "51": { name: "Square Top-Handle Mini Bag", details: "Structured square mini bag with a rigid top handle and gold-tone clasp.", badge: "Signature", price: 699, originalPrice: 2799 },
+  "52": { name: "Retro Flap Shoulder Bag", details: "Retro-inspired flap shoulder bag with vintage metal clasp and chain strap.", badge: "New", price: 649, originalPrice: 2599 },
+  "53": { name: "Large Casual Hobo Bag", details: "Relaxed hobo silhouette with soft body and shoulder strap. Great for daily casual use.", badge: "Best Seller", price: 749, originalPrice: 2999 },
+  "54": { name: "Structured Boxy Satchel Bag", details: "Boxy satchel with dual compartments, front zip pocket, and comfortable handles.", badge: "Popular", price: 799, originalPrice: 3199 },
+  "55": { name: "Woven Bucket Bag", details: "Stylish woven bucket bag with drawstring top and leather-trim base.", badge: "Trending", price: 699, originalPrice: 2799 },
+  "56": { name: "Textured Flap Mini Crossbody", details: "Textured-finish mini crossbody with flap closure and adjustable chain strap.", badge: "New", price: 599, originalPrice: 2399 },
+  "57": { name: "Casual Zip-Around Shoulder Bag", details: "Practical zip-around shoulder bag with multiple outer pockets.", badge: "Popular", price: 699, originalPrice: 2799 },
+  "58": { name: "Structured Envelope Clutch", details: "Sleek envelope clutch with magnetic snap and wrist loop. Ideal for formal events.", badge: "Festive", price: 549, originalPrice: 2199 },
+  "59": { name: "Compact Camera Crossbody Bag", details: "Small camera-style crossbody with secure zip-top closure and adjustable strap.", badge: "New", price: 599, originalPrice: 2399 },
+  "60": { name: "Classic Saddle Crossbody Bag", details: "Timeless saddle crossbody with flap closure and long adjustable strap.", badge: "Best Seller", price: 699, originalPrice: 2799 },
+  "61": { name: "Structured Open-Top Tote", details: "Open-top structured tote with rigid handles and a spacious main compartment.", badge: "Signature", price: 749, originalPrice: 2999 },
+  "62": { name: "Color-Block Sling Bag", details: "Eye-catching color-block sling bag with contrast panels and adjustable strap.", badge: "Trending", price: 649, originalPrice: 2599 },
+  "63": { name: "Designer Chain Strap Shoulder Bag", details: "Chic shoulder bag with a gold-tone chain strap and structured flap closure.", badge: "Popular", price: 799, originalPrice: 3199 },
+  "64": { name: "Lino Perros Tan Multi-Pocket Sling", details: "Functional tan sling bag with multiple exterior pockets and woven strap.", badge: "New", price: 699, originalPrice: 2799 },
+  "65": { name: "Lino Perros Coffee Compact Sling Bag", details: "Compact coffee-tone sling with flap closure and adjustable woven strap.", badge: "Best Seller", price: 649, originalPrice: 2599 },
+  "66": { name: "Lino Perros Tan Structured Tote Bag", details: "Premium tan structured tote with leather trim and gold-tone hardware.", badge: "Signature", price: 849, originalPrice: 3399 },
+  "67": { name: "Lino Perros Taupe Sling Shoulder Bag", details: "Elegant taupe sling bag with minimalist design and adjustable strap.", badge: "Popular", price: 699, originalPrice: 2799 },
+  "68": { name: "Lino Perros Tan Zip-Top Handbag", details: "Classic tan handbag with zip-top closure and dual carry handles.", badge: "New", price: 799, originalPrice: 3199 },
+};
+
 // Category configs for generating realistic product names, pricing, and tags
 // Prices are AFTER 75% off — originals are ~4x (before discount)
 const categoryConfig = {
@@ -399,6 +533,43 @@ export const products = Object.values(productMap).map((prod, idx) => {
       details: "Exquisite ethnic suit crafted for special occasions, featuring premium fabric and authentic Rajasthani heritage craftsmanship.",
       sizes: ["XS", "S", "M", "L", "XL", "XXL", "3XL"],
       badge: "New",
+    };
+  }
+
+  // ── Purse category: use rich per-product data ─────────────────────────────
+  if (prod.category === "Purse") {
+    const folderNum = prod.folder.trim();
+    const purseData = PURSE_PRODUCTS[folderNum];
+    if (purseData) {
+      return {
+        id: prod.id,
+        name: purseData.name,
+        category: "Purse",
+        price: purseData.price,
+        originalPrice: purseData.originalPrice,
+        image: prod.images[0],
+        gallery: prod.images,
+        tone: purseData.details.slice(0, 80) + "…",
+        details: purseData.details,
+        sizes: [], // No size selection for purses/bags
+        badge: purseData.badge,
+        isPurse: true,
+      };
+    }
+    // Fallback for unknown purse folders
+    return {
+      id: prod.id,
+      name: `Stylish Bag (${prod.folder})`,
+      category: "Purse",
+      price: 699,
+      originalPrice: 2799,
+      image: prod.images[0],
+      gallery: prod.images,
+      tone: "Chic and functional bag for everyday use",
+      details: "A stylish and functional bag crafted with premium materials. Perfect for everyday use, outings, and special occasions.",
+      sizes: [],
+      badge: "New",
+      isPurse: true,
     };
   }
 

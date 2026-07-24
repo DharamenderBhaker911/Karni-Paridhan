@@ -2417,17 +2417,52 @@ main { overflow: hidden; }
 }
 .sale-modal__cta:hover { background: #7b1c3a; transform: translateY(-2px); }
 .sale-modal__note { font-size: 0.72rem; color: #bbb; letter-spacing: 0.01em; }
-.sale-modal__days-left {
-  font-size: 1rem;
-  font-weight: 700;
+/* ── 48-hour live countdown timer ─────────────────────────────────────────── */
+.sale-modal__timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin: 0.5rem 0 0.6rem;
+}
+.sale-modal__timer-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(229, 57, 53, 0.12);
+  border: 1px solid rgba(229, 57, 53, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem 0.25rem;
+  min-width: 2.8rem;
+}
+.sale-modal__timer-num {
+  font-size: 1.55rem;
+  font-weight: 800;
   color: #e53935;
-  letter-spacing: 0.04em;
-  margin: 0.3rem 0 0.5rem;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Inter', sans-serif;
+  animation: pulse-red 1.4s ease-in-out infinite;
+}
+.sale-modal__timer-label {
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: 0.12em;
+  margin-top: 0.15rem;
+}
+.sale-modal__timer-sep {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #e53935;
+  line-height: 1;
+  margin-bottom: 0.6rem;
   animation: pulse-red 1.4s ease-in-out infinite;
 }
 @keyframes pulse-red {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.65; }
+  50% { opacity: 0.55; }
 }
 
 @media (max-width: 420px) {

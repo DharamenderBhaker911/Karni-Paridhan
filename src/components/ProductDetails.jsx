@@ -199,29 +199,31 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
             </div>
           )}
 
-          {/* Size Selector */}
-          <div ref={sizeRowRef}>
-            <p className="size-label">
-              Select Size
-              {selectedSize && <span className="selected-size-display">{selectedSize}</span>}
-            </p>
-            <div className={`size-row ${sizeError ? "size-row-shake" : ""}`}>
-              {product.sizes.map((size) => (
-                <button
-                  key={size}
-                  type="button"
-                  className={`size-btn ${selectedSize === size ? "selected" : ""}`}
-                  onClick={() => { setSelectedSize(size); setSizeError(false); }}
-                  aria-pressed={selectedSize === size}
-                >
-                  {size}
-                </button>
-              ))}
+          {/* Size Selector — hidden for Purse/bags */}
+          {product.sizes && product.sizes.length > 0 && (
+            <div ref={sizeRowRef}>
+              <p className="size-label">
+                Select Size
+                {selectedSize && <span className="selected-size-display">{selectedSize}</span>}
+              </p>
+              <div className={`size-row ${sizeError ? "size-row-shake" : ""}`}>
+                {product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    className={`size-btn ${selectedSize === size ? "selected" : ""}`}
+                    onClick={() => { setSelectedSize(size); setSizeError(false); }}
+                    aria-pressed={selectedSize === size}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+              {sizeError && (
+                <p className="size-error-pill">⚠ Please select a size to continue</p>
+              )}
             </div>
-            {sizeError && (
-              <p className="size-error-pill">⚠ Please select a size to continue</p>
-            )}
-          </div>
+          )}
 
           {/* Quantity Stepper */}
           <div className="qty-control">
