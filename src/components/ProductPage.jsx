@@ -529,7 +529,8 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
   }, [onClose]);
 
   function validate() {
-    if (!selectedSize) {
+    // Only enforce size selection if the product actually has sizes
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
       setSizeError(true);
       sizeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(() => setSizeError(false), 800);
