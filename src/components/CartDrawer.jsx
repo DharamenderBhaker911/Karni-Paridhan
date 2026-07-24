@@ -95,7 +95,7 @@ function CartDrawer() {
                     <div className="qty-mini">
                       <button
                         type="button"
-                        onClick={() => updateQuantity(item.id, item.qty - 1)}
+                        onClick={() => updateQuantity(item, item.qty - 1)}
                         aria-label="Decrease"
                       >
                         −
@@ -103,7 +103,7 @@ function CartDrawer() {
                       <span>{item.qty}</span>
                       <button
                         type="button"
-                        onClick={() => updateQuantity(item.id, item.qty + 1)}
+                        onClick={() => updateQuantity(item, item.qty + 1)}
                         aria-label="Increase"
                       >
                         +
@@ -112,7 +112,7 @@ function CartDrawer() {
                     <button
                       type="button"
                       className="remove-btn"
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.id, item.selectedSize)}
                     >
                       Remove
                     </button>
@@ -174,6 +174,7 @@ function CartDrawer() {
         <PaymentModal
           subtotal={subtotal}
           productName={cartSummary}
+          items={cartItems}
           onClose={() => setShowPayment(false)}
           onSuccess={handlePaymentSuccess}
         />

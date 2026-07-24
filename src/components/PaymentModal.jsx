@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { formatPrice } from "../utils/format";
+import { useCreateOrder } from "../hooks/useOrders";
 
 const UPI_ID = "paytmQR6up87h@ptys";
 const PAYEE_NAME = "Shree Laddu Gopal Sweets";
@@ -12,7 +13,7 @@ const gpayLogo = "https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay
 const phonepeLogo = "https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg";
 
 // Steps: address → payment → sending → success
-function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess }) {
+function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onSuccess }) {
   const [step, setStep] = useState("address");
   const [sameAsPhone, setSameAs] = useState(true);
   const [formErrors, setErrors] = useState({});
@@ -27,6 +28,7 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
 
   const qrRef = useRef(null);
   const payBodyRef = useRef(null);
+  const { mutate: createOrder } = useCreateOrder();
 
   const base = subtotal;
   const gst = Math.round(base * GST_RATE);
@@ -130,6 +132,17 @@ function PaymentModal({ subtotal, productName, selectedSize, onClose, onSuccess 
     setTimeout(() => {
       window.open(`https://wa.me/${SHOP_WA}?text=${buildShopMsg()}`, "_blank");
     }, 400);
+
+    // Save order to Supabase
+    createOrder({
+      order_id: orderId,
+      status: "pending",
+      total: total,
+      items: items || (productName ? [{ name: productName, size: selectedSize, qty: 1 }] : []),
+      customer_name: form.name,
+      customer_phone: form.phone,
+      shipping_address: `${form.address}, ${form.city}, ${form.state} - ${form.pincode}`
+    });
 
     // Move to success after a moment
     setTimeout(() => {

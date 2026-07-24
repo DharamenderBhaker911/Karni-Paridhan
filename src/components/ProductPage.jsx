@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { formatPrice } from "../utils/format";
 import { enrichProduct } from "../data/productEnricher";
+import { useWishlist, useToggleWishlist } from "../hooks/useWishlist";
 
 /* ─── Icon helpers (inline SVG for zero-dep) ──────────────────────────── */
 const Ico = {
@@ -507,10 +508,13 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize,  setSelectedSize]  = useState(null);
   const [qty,           setQty]           = useState(1);
-  const [wishlisted,    setWishlisted]    = useState(false);
   const [sizeError,     setSizeError]     = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const sizeRef = useRef(null);
+
+  const { data: wishlist = [] } = useWishlist();
+  const { mutate: toggleWishlist } = useToggleWishlist();
+  const wishlisted = wishlist.includes(rawProduct.id);
 
   // Gallery updates with selected colour
   const gallery = (product.colorGalleries?.[selectedColor?.name]) || product.gallery || [product.image];
@@ -549,12 +553,6 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
     onBuyNow({ ...rawProduct, selectedSize, selectedColor: selectedColor?.name, qty });
   }
 
-  function handleOpen(p) {
-    // Replace current product view with the clicked similar product
-    onClose();
-    setTimeout(() => onAdd && false, 0); // no-op — parent will handle via onOpen
-  }
-
   const disc = rawProduct.originalPrice
     ? Math.round(((rawProduct.originalPrice - rawProduct.price) / rawProduct.originalPrice) * 100)
     : null;
@@ -570,7 +568,7 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
         <div className="pdp-topbar-actions">
           <button
             className={`pdp-topbar-btn ${wishlisted ? "pdp-topbar-btn--active" : ""}`}
-            onClick={() => setWishlisted(v => !v)}
+            onClick={() => toggleWishlist({ productId: rawProduct.id, isCurrentlyWishlisted: wishlisted })}
             aria-label="Wishlist"
           >
             <Ico.Heart filled={wishlisted} />

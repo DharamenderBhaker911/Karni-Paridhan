@@ -50,25 +50,25 @@ const IconArrow = () => (
 
 /* ─── Data ──────────────────────────────────────────────────────────────────── */
 const shopLinks = [
-  { label: "Royal Poshak",   href: "#products" },
-  { label: "Anarkali Suits", href: "#products" },
-  { label: "Kurta Sets",     href: "#products" },
-  { label: "New Arrivals",   href: "#products" },
-  { label: "Sale",           href: "#products" },
+  { label: "Royal Poshak",   href: "/#/" },
+  { label: "Anarkali Suits", href: "/#/" },
+  { label: "Kurta Sets",     href: "/#/" },
+  { label: "New Arrivals",   href: "/#/" },
+  { label: "Sale",           href: "/#/" },
 ];
 const infoLinks = [
-  { label: "About Us",           href: "#craft" },
-  { label: "Our Collections",    href: "#collections" },
-  { label: "Size Guide",         href: "#" },
-  { label: "Fabric Care Tips",   href: "#" },
-  { label: "Gift Cards",         href: "#" },
+  { label: "About Us",           href: "/#/about" },
+  { label: "Our Collections",    href: "/#/" },
+  { label: "Size Guide",         href: "/#/size-guide" },
+  { label: "Fabric Care Tips",   href: "/#/faqs" },
+  { label: "Gift Cards",         href: "/#/contact" },
 ];
 const supportLinks = [
-  { label: "Returns & Exchange", href: "#" },
-  { label: "Track Your Order",   href: "#" },
-  { label: "FAQs",               href: "#" },
-  { label: "Privacy Policy",     href: "#" },
-  { label: "Terms of Service",   href: "#" },
+  { label: "Returns & Exchange", href: "/#/shipping-returns" },
+  { label: "Track Your Order",   href: "/#/track-order" },
+  { label: "FAQs",               href: "/#/faqs" },
+  { label: "Privacy Policy",     href: "/#/privacy" },
+  { label: "Terms of Service",   href: "/#/terms" },
 ];
 
 const socialLinks = [
@@ -92,16 +92,17 @@ const trustBadges = [
 ];
 
 /* ─── Component ─────────────────────────────────────────────────────────────── */
+import { useNewsletter } from "../hooks/useNewsletter";
+
 function Footer() {
   const year = new Date().getFullYear();
   const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
+  const { mutate: subscribe, isSuccess, isPending } = useNewsletter();
 
   function handleSubscribe(e) {
     e.preventDefault();
     if (email.trim()) {
-      setSubscribed(true);
-      setEmail("");
+      subscribe(email);
     }
   }
 
@@ -244,7 +245,7 @@ function Footer() {
               <p className="footer-newsletter-sub">
                 Join our mailing list for sale alerts & new drops.
               </p>
-              {subscribed ? (
+              {isSuccess ? (
                 <div className="footer-subscribed">
                   🎉 You're on the list! Thank you.
                 </div>
@@ -256,11 +257,12 @@ function Footer() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isPending}
                     className="footer-newsletter-input"
                     aria-label="Email for newsletter"
                   />
-                  <button type="submit" className="footer-newsletter-btn">
-                    Subscribe
+                  <button type="submit" className="footer-newsletter-btn" disabled={isPending}>
+                    {isPending ? "..." : "Subscribe"}
                   </button>
                 </form>
               )}
