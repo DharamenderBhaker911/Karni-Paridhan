@@ -6,6 +6,7 @@ const categories = [
   { label: "Anarkali", href: "#products", icon: "🌸" },
   { label: "Kurta-Set", href: "#products", icon: "✨" },
   { label: "Rajputi Posak", href: "#products", icon: "👑" },
+  { label: "Suit", href: "#products", icon: "👘" },
 ];
 
 function Header({ onCategorySelect }) {

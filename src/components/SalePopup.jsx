@@ -38,13 +38,15 @@ function SalePopup({ onClose }) {
         </button>
 
         {/* Tag line */}
-        <p className="sale-modal__eyebrow">🏷 Limited Time Offer</p>
+        <p className="sale-modal__eyebrow text-red-700">🏷 Limited Time Offer</p>
 
         {/* Big % */}
         <div className="sale-modal__badge-row">
           <span className="sale-modal__pct">75<sup>%</sup></span>
           <span className="sale-modal__off">OFF</span>
         </div>
+
+        <p className="sale-modal__days-left">⏰ 2 Days Left!</p>
 
         <p className="sale-modal__headline serif">Royal Collection<br /><em>at Unbeatable Prices</em></p>
 

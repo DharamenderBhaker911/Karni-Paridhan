@@ -24,6 +24,12 @@ const COLOR_PALETTES = {
     { name: "Emerald", hex: "#1A5C3A", availableSizes: ["S","M","L","XL"] },
     { name: "Royal",   hex: "#2D1B69", availableSizes: ["M","L","XL","Custom"] },
   ],
+  Suit: [
+    { name: "Natural", hex: "#D4C5A9", availableSizes: ["XS","S","M","L","XL","XXL","3XL"] },
+    { name: "Navy",    hex: "#1B2A4A", availableSizes: ["XS","S","M","L","XL","XXL"] },
+    { name: "Crimson", hex: "#9B1B2A", availableSizes: ["S","M","L","XL","XXL"] },
+    { name: "Teal",    hex: "#2C7873", availableSizes: ["XS","S","M","L","XL"] },
+  ],
 };
 
 const HIGHLIGHTS_MAP = {
@@ -50,6 +56,14 @@ const HIGHLIGHTS_MAP = {
     { icon: "🪡", label: "Heavy Gota Patti" },
     { icon: "🎀", label: "Traditional Odhni" },
     { icon: "💎", label: "Artisan Craftsmanship" },
+  ],
+  Suit: [
+    { icon: "🪡", label: "Embroidered Yoke" },
+    { icon: "🧵", label: "Fine Thread Work" },
+    { icon: "👗", label: "3-Piece Set" },
+    { icon: "✂️", label: "Straight Cut Fit" },
+    { icon: "🌸", label: "Printed Dupatta" },
+    { icon: "🫧", label: "Gentle Hand Wash" },
   ],
 };
 
@@ -78,6 +92,14 @@ const FABRIC_CARE_MAP = {
     { label: "Fit",      value: "Flared Lehnga Silhouette" },
     { label: "Wash",     value: "Dry Clean Only" },
   ],
+  Suit: [
+    { label: "Fabric",   value: "Chanderi / Silk Blend / Cotton Silk" },
+    { label: "Work",     value: "Embroidery / Block Print / Gota Patti" },
+    { label: "Neck",     value: "V-Neck / Keyhole / Mandarin Neck" },
+    { label: "Sleeves",  value: "3/4 / Full / Bell Sleeves" },
+    { label: "Fit",      value: "Straight / Regular Cut" },
+    { label: "Wash",     value: "Hand Wash Cold / Dry Clean" },
+  ],
 };
 
 const SPECS_MAP = {
@@ -105,6 +127,14 @@ const SPECS_MAP = {
     ["Includes",   "Kancheoli + Ghagra + Odhni"],
     ["Packaging",  "Premium Heritage Box"],
   ],
+  Suit: [
+    ["Material",   "Chanderi / Silk Blend / Cotton Silk"],
+    ["Pattern",    "Printed / Embroidered / Block Print"],
+    ["Occasion",   "Festive, Casual, Semi-formal"],
+    ["Kurta Len.", "44\" (size M)"],
+    ["Includes",   "Kurta + Pant + Dupatta"],
+    ["Packaging",  "Branded Gift Bag"],
+  ],
 };
 
 const FAQS_MAP = {
@@ -127,6 +157,13 @@ const FAQS_MAP = {
     { q: "Is the posak suitable for bridal use?", a: "Yes, our Rajputi Posak range is crafted specifically for bridal and ceremonial occasions." },
     { q: "What is included in the set?", a: "The complete set includes Kancheoli (blouse), Ghagra (skirt), and Odhni (veil)." },
     { q: "Is dry cleaning mandatory?", a: "Yes, dry cleaning is highly recommended to preserve the intricate gota patti work." },
+  ],
+  Suit: [
+    { q: "Is this a 3-piece set?", a: "Yes! Every suit set includes a kurta, matching pants, and a dupatta." },
+    { q: "What fabric is used?", a: "Our suits are crafted from premium Chanderi, Silk Blend, or Cotton Silk fabrics depending on the style." },
+    { q: "Can I hand wash this suit?", a: "Yes, gentle hand wash in cold water is recommended. For embroidered pieces, dry cleaning is advised." },
+    { q: "What is the return or exchange policy?", a: "We offer a 7-day easy return or exchange policy for all products." },
+    { q: "Is custom stitching available?", a: "Yes, please mention your measurements in the order notes and we will accommodate your request." },
   ],
 };
 
@@ -179,6 +216,7 @@ export function enrichProduct(product) {
       Anarkali:       "Wear the grace of tradition",
       "Kurta-Set":    "Elegance meets everyday comfort",
       "Rajputi Posak":"Born royal. Crafted for queens.",
+      Suit:           "Crafted for every celebration.",
     }[cat] || "Celebrating Indian heritage",
     rating: (4.6 + Math.random() * 0.4).toFixed(1),
     reviewCount: 85 + Math.floor(Math.random() * 320),

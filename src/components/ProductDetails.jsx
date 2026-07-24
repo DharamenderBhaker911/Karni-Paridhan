@@ -192,6 +192,13 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
 
           <p className="description">{product.details}</p>
 
+          {product.bestFor && (
+            <div className="best-for-row">
+              <span className="best-for-label">🎯 Best For:</span>
+              <span className="best-for-text">{product.bestFor}</span>
+            </div>
+          )}
+
           {/* Size Selector */}
           <div ref={sizeRowRef}>
             <p className="size-label">
