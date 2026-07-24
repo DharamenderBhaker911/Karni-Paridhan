@@ -1,17 +1,37 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import ProductCard from "./ProductCard";
 
 const ALL = "All";
 const PAGE_SIZE = 8; // products per page
 
+/** Fisher-Yates shuffle — returns a NEW shuffled array, does not mutate the original */
+function shuffleArray(arr, seed) {
+  const result = [...arr];
+  // Simple seeded pseudo-random using the seed value
+  let s = seed;
+  const rand = () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 function ProductGrid({ products, onOpen, onAdd, onBuyNow, activeCategory, setActiveCategory }) {
   const [page, setPage] = useState(1);
 
+  // Generate a random seed once per page-load (component mount); it never changes
+  // while the tab is open, but every fresh page load / refresh gives a new seed.
+  const seedRef = useRef(Math.floor(Math.random() * 0xffffffff));
+
   const activeFilter = activeCategory || ALL;
 
-  // Stable order (sort by id so it's consistent)
+  // Shuffle ALL products randomly on page load, then keep that order stable
   const sortedProducts = useMemo(() => {
-    return [...products].sort((a, b) => a.id.localeCompare(b.id));
+    return shuffleArray(products, seedRef.current);
   }, [products]);
 
   const categories = useMemo(() => {

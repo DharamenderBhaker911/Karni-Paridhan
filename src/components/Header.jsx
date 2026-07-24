@@ -39,9 +39,12 @@ function Header({ onCategorySelect }) {
           aria-label="Toggle menu"
           onClick={() => setMobileOpen((v) => !v)}
         >
-          <span />
-          <span />
-          <span />
+          <span className="mobile-menu-bars">
+            <span />
+            <span />
+            <span />
+          </span>
+          <span className="mobile-menu-label">{mobileOpen ? "Close" : "Menu"}</span>
         </button>
 
         {/* Brand — centered on mobile, left on desktop */}
