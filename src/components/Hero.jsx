@@ -36,21 +36,12 @@ function Hero() {
 
       {/* Bottom Trust Bar */}
       <div className="hero-trust-bar motion-rise motion-rise-d4">
-
         {/* Free Delivery */}
         <div className="trust-pill">
-          <span className="trust-pill-icon">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
-              <rect x="2" y="14" width="30" height="20" rx="3" fill="#7b1c3a" opacity="0.12" />
-              <rect x="2" y="14" width="30" height="20" rx="3" stroke="#7b1c3a" strokeWidth="2" />
-              <path d="M32 22h8l4 6v6h-12V22z" fill="#c49a3c" opacity="0.2" stroke="#c49a3c" strokeWidth="2" />
-              <circle cx="10" cy="36" r="4" fill="#7b1c3a" stroke="#fff" strokeWidth="1.5" />
-              <circle cx="36" cy="36" r="4" fill="#7b1c3a" stroke="#fff" strokeWidth="1.5" />
-              <path d="M8 22h16" stroke="#7b1c3a" strokeWidth="2" strokeLinecap="round" />
-              <path d="M8 27h10" stroke="#7b1c3a" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+          <span className="trust-pill-icon" role="img" aria-label="Delivery Truck">
+            🚚
           </span>
-          <div>
+          <div className="trust-pill-text-container">
             <span className="trust-pill-title">Free Delivery</span>
             <span className="trust-pill-sub">Pan India</span>
           </div>
