@@ -1,11 +1,8 @@
-/**
- * GallerySection — Karni Paridhan
- * Instagram-style photo grid using product images
- */
+
 import { useState } from "react";
 import { products } from "../data/products";
 
-// Pick the first image from up to 9 different products across categories
+
 function getGalleryImages() {
   const seen = new Set();
   const result = [];

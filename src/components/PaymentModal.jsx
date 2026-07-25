@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { formatPrice } from "../utils/format";
 import { useCreateOrder } from "../hooks/useOrders";
+import { supabase } from "../supabase/client";
 
 const UPI_ID = "paytmQR6up87h@ptys";
 const PAYEE_NAME = "Shree Laddu Gopal Sweets";
@@ -21,6 +22,8 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
     name: "", phone: "", whatsapp: "",
     address: "", city: "", state: "", pincode: "",
   });
+  const [screenshotFile, setScreenshotFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [orderId] = useState(
     () => "#KP" + Date.now().toString(36).toUpperCase().slice(-6)
@@ -150,9 +153,42 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
     );
   }
 
-  function openCustomerWhatsApp() {
+  async function openCustomerWhatsApp() {
     // Stop the timer immediately — payment confirmed
     clearInterval(timerRef.current);
+
+    setIsUploading(true);
+    let screenshotUrl = null;
+
+    if (screenshotFile) {
+      const fileExt = screenshotFile.name.split('.').pop();
+      const fileName = `${orderId}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('payment-screenshots')
+        .upload(fileName, screenshotFile);
+
+      if (!error) {
+        const { data: publicUrlData } = supabase.storage
+          .from('payment-screenshots')
+          .getPublicUrl(fileName);
+        screenshotUrl = publicUrlData.publicUrl;
+      }
+    }
+
+    // Save order to Supabase
+    createOrder({
+      order_id: orderId,
+      status: "pending",
+      payment_status: "pending",
+      payment_screenshot_url: screenshotUrl,
+      total: total,
+      items: items || (productName ? [{ name: productName, size: selectedSize, qty: 1 }] : []),
+      customer_name: form.name,
+      customer_phone: form.phone,
+      shipping_address: `${form.address}, ${form.city}, ${form.state} - ${form.pincode}`
+    });
+
+    setIsUploading(false);
 
     // Open WhatsApp to CUSTOMER with their order bill
     const url = `https://wa.me/91${customerWa}?text=${buildCustomerMsg()}`;
@@ -162,17 +198,6 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
     setTimeout(() => {
       window.open(`https://wa.me/${SHOP_WA}?text=${buildShopMsg()}`, "_blank");
     }, 400);
-
-    // Save order to Supabase
-    createOrder({
-      order_id: orderId,
-      status: "pending",
-      total: total,
-      items: items || (productName ? [{ name: productName, size: selectedSize, qty: 1 }] : []),
-      customer_name: form.name,
-      customer_phone: form.phone,
-      shipping_address: `${form.address}, ${form.city}, ${form.state} - ${form.pincode}`
-    });
 
     // Move to success after a moment
     setTimeout(() => {
@@ -360,12 +385,26 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
               <button className="pm-pay__download-btn" onClick={downloadQR}>⬇ Download QR</button>
             </div>
 
+            <div style={{ marginTop: "16px", marginBottom: "16px", background: "#f9fafb", padding: "12px", borderRadius: "8px", border: "1px dashed #cbd5e1" }}>
+              <label style={{ display: "block", fontSize: "0.9rem", fontWeight: "600", marginBottom: "8px" }}>
+                Upload Payment Screenshot (Required for verification)
+              </label>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={e => setScreenshotFile(e.target.files[0])} 
+                style={{ fontSize: "0.85rem", width: "100%" }}
+              />
+            </div>
+
             {/* "I've Paid" confirmation button — triggers WhatsApp + success */}
             <button
               className="pm-pay__confirm-btn"
               onClick={handleUpiClick}
+              disabled={isUploading || !screenshotFile}
+              style={{ opacity: (!screenshotFile || isUploading) ? 0.5 : 1 }}
             >
-              ✅ I've Completed Payment
+              {isUploading ? "Processing..." : "✅ I've Completed Payment"}
             </button>
 
             <div className="pm-pay__or"><span>or open app directly</span></div>
@@ -471,13 +510,13 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
               <div className="pm-field-row">
                 <div className={`pm-field ${formErrors.city ? "pm-field--err" : ""}`}>
                   <label htmlFor="pm-city">City *</label>
-                  <input id="pm-city" type="text"
+                  <input id="pm-city" type="text" placeholder="City"
                     value={form.city} onChange={e => setField("city", e.target.value)} />
                   {formErrors.city && <p className="pm-err">{formErrors.city}</p>}
                 </div>
                 <div className={`pm-field ${formErrors.state ? "pm-field--err" : ""}`}>
                   <label htmlFor="pm-state">State *</label>
-                  <input id="pm-state" type="text"
+                  <input id="pm-state" type="text" placeholder="State"
                     value={form.state} onChange={e => setField("state", e.target.value)} />
                   {formErrors.state && <p className="pm-err">{formErrors.state}</p>}
                 </div>
@@ -490,9 +529,6 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
                 {formErrors.pincode && <p className="pm-err">{formErrors.pincode}</p>}
               </div>
 
-              <p className="pm-addr__wa-hint">
-                📲 Your order bill will be auto-sent to your WhatsApp after payment
-              </p>
 
               <button type="submit" className="pm-addr__submit">
                 Proceed to Payment →

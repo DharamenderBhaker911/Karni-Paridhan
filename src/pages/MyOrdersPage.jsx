@@ -60,6 +60,14 @@ function OrderCard({ order }) {
               {order.selected_size && <p>Size: {order.selected_size}</p>}
               <p>Payment: {order.payment_method}</p>
               <div className="order-price-breakdown">
+                <span>Payment Status</span>
+                <span style={{ 
+                  textTransform: "capitalize", 
+                  fontWeight: "600",
+                  color: order.payment_status === 'verified' ? '#16a34a' : order.payment_status === 'rejected' ? '#dc2626' : '#ca8a04' 
+                }}>
+                  {order.payment_status || "Pending"}
+                </span>
                 <span>Subtotal</span><span>₹{order.subtotal?.toLocaleString("en-IN")}</span>
                 <span>GST (5%)</span><span>₹{order.gst_amount?.toLocaleString("en-IN")}</span>
                 <span className="order-price-total"><strong>Total</strong></span>

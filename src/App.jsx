@@ -14,9 +14,7 @@ import Footer from "./components/Footer";
 import PaymentModal from "./components/PaymentModal";
 import SalePopup from "./components/SalePopup";
 
-// New homepage sections
-import UspSection from "./components/UspSection";
-import CraftStorySection from "./components/CraftStorySection";
+
 import TestimonialsSection from "./components/TestimonialsSection";
 import GallerySection from "./components/GallerySection";
 import OfferBannerSection from "./components/OfferBannerSection";
@@ -71,9 +69,6 @@ function StoreFront() {
       {/* ── Offer Banner (Sale Countdown) ── */}
       <OfferBannerSection />
 
-      {/* ── USP Strip ── */}
-      <UspSection />
-
       {/* ── Product Grid ── */}
       <ProductGrid
         products={products}
@@ -84,8 +79,6 @@ function StoreFront() {
         setActiveCategory={setActiveCategory}
       />
 
-      {/* ── Craft / Brand Story ── */}
-      <CraftStorySection />
 
       {/* ── Gallery ── */}
       <GallerySection />

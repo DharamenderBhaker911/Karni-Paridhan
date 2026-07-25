@@ -1,7 +1,4 @@
-/**
- * TestimonialsSection — Karni Paridhan
- * Customer reviews carousel with star ratings
- */
+
 import { useState } from "react";
 
 const testimonials = [
