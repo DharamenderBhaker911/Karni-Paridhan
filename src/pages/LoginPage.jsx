@@ -78,7 +78,7 @@ export default function LoginPage() {
           <span className="auth-brand">Karni Paridhan</span>
         </div>
 
-        <h1 className="auth-title">Welcome Back 👑</h1>
+        <h1 className="auth-title">Login</h1>
         <p className="auth-sub">Sign in to access your orders & wishlist</p>
 
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
@@ -163,9 +163,9 @@ export default function LoginPage() {
         </form>
 
         <p className="auth-switch">
-          Don't have an account?{" "}
+          Create account ?{" "}
           <Link to="/signup" className="auth-switch-link">
-            Create one free
+            Register now
           </Link>
         </p>
       </div>

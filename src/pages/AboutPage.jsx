@@ -1,7 +1,3 @@
-/**
- * AboutPage — Karni Paridhan
- * Brand story, heritage, values, and artisan spotlight
- */
 import { Link } from "react-router-dom";
 import { images, products } from "../data/products";
 import Header from "../components/Header";
