@@ -4,8 +4,8 @@ import { formatPrice } from "../utils/format";
 import { useCreateOrder } from "../hooks/useOrders";
 import { supabase } from "../supabase/client";
 
-const UPI_ID = "paytmQR6up87h@ptys";
-const PAYEE_NAME = "Shree Laddu Gopal Sweets";
+const UPI_ID = "bhaninder233@okaxis";
+const PAYEE_NAME = "Bhaninder Singh Baghel";
 const GST_RATE = 0.18;
 const SHOP_WA = "916376614836";
 
@@ -389,10 +389,10 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
               <label style={{ display: "block", fontSize: "0.9rem", fontWeight: "600", marginBottom: "8px" }}>
                 Upload Payment Screenshot (Required for verification)
               </label>
-              <input 
-                type="file" 
-                accept="image/*" 
-                onChange={e => setScreenshotFile(e.target.files[0])} 
+              <input
+                type="file"
+                accept="image/*"
+                onChange={e => setScreenshotFile(e.target.files[0])}
                 style={{ fontSize: "0.85rem", width: "100%" }}
               />
             </div>

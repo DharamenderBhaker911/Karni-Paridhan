@@ -95,11 +95,6 @@ function ProductGrid({ products, onOpen, onAdd, onBuyNow, activeCategory, setAct
             aria-pressed={activeFilter === cat}
           >
             {cat === ALL ? "🛍 All" : cat}
-            <span className="shop-filter-count">
-              {cat === ALL
-                ? products.length
-                : products.filter(p => p.category === cat).length}
-            </span>
           </button>
         ))}
       </div>

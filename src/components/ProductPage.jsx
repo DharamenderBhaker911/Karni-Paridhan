@@ -465,7 +465,6 @@ function SimilarProducts({ products, currentId, onOpen }) {
           return (
             <div key={p.id} className="pdp-similar-card" onClick={() => onOpen(p)}>
               <div className="pdp-similar-img-wrap">
-                {disc && <span className="pdp-similar-badge">{disc}% OFF</span>}
                 <img src={p.image} alt={p.name} loading="lazy" />
               </div>
               <div className="pdp-similar-info">
@@ -615,7 +614,6 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
                     MRP <s>{formatPrice(rawProduct.originalPrice)}</s>
                   </span>
                 )}
-                {disc && <span className="pdp-disc-badge">{disc}% OFF</span>}
               </div>
               <p className="pdp-tax-note">Inclusive of all taxes</p>
 

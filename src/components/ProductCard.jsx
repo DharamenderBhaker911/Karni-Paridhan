@@ -29,11 +29,6 @@ function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
           className={`pc__img ${imgLoaded ? "pc__img--loaded" : ""}`}
         />
 
-        {/* Discount badge */}
-        {discountPct && (
-          <span className="pc__badge pc__badge--sale">{discountPct}% OFF</span>
-        )}
-
         {/* Wishlist */}
         <button
           type="button"
