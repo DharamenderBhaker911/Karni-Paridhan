@@ -244,6 +244,31 @@ const SIZE_GUIDE = {
 export function enrichProduct(product) {
   const cat = product.category;
 
+  // Determine if this product should be part of the 75% OFF sale (approx 20% of products)
+  const charSum = product.id.toString().split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const is75OffSale = charSum % 5 === 0;
+
+  let enrichedPrice = product.price;
+  let enrichedOriginalPrice = product.originalPrice;
+
+  if (is75OffSale) {
+    if (enrichedOriginalPrice) {
+      enrichedPrice = Math.round(enrichedOriginalPrice * 0.25);
+    } else if (enrichedPrice) {
+      enrichedOriginalPrice = enrichedPrice * 4;
+    }
+  } else {
+    // If not on the special 75% OFF sale, do not show any discount.
+    // The current price remains, but we remove the originalPrice so it doesn't calculate a discount.
+    enrichedOriginalPrice = null;
+  }
+
+  product = {
+    ...product,
+    price: enrichedPrice,
+    originalPrice: enrichedOriginalPrice,
+  };
+
   // ── Purse: no colours, no size guide, bag-specific enrichment ───────────
   if (cat === "Purse" || product.isPurse) {
     return {

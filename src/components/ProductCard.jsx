@@ -41,6 +41,12 @@ function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
 
         {/* Category label */}
         <span className="pc__cat-pill">{product.category}</span>
+
+        {discountPct === 75 && (
+           <span className="pc__sale-badge" style={{ position: 'absolute', top: '10px', left: '10px', background: '#d32f2f', color: 'white', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 'bold', borderRadius: '4px', zIndex: 2 }}>
+             SALE
+           </span>
+        )}
       </div>
 
       {/* Info */}
@@ -56,8 +62,15 @@ function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
         <div className="pc__price-row">
           <span className="pc__price">{formatPrice(product.price)}</span>
           {product.originalPrice && (
-            <span className="pc__orig">{formatPrice(product.originalPrice)}</span>
+            <>
+              <span className="pc__orig">{formatPrice(product.originalPrice)}</span>
+              {discountPct > 0 && <span className="pc__discount" style={{ color: '#d32f2f', fontWeight: 600, fontSize: '0.85rem', marginLeft: '6px' }}>({discountPct}% OFF)</span>}
+            </>
           )}
+        </div>
+
+        <div className="pc__delivery" style={{ fontSize: '0.75rem', color: '#666', marginTop: '4px', marginBottom: '8px' }}>
+          Expected Delivery: <span style={{ fontWeight: 600, color: '#333' }}>{product.deliveryDate}</span>
         </div>
 
         {/* Sizes strip */}

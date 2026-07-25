@@ -16,12 +16,12 @@ function Header({ onCategorySelect }) {
   const { cartCount, setCartOpen } = useCart();
   const { isLoggedIn, isAdmin, signOut, profile } = useAuth();
   const navigate = useNavigate();
-  
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileCategoryOpen, setMobileCategoryOpen] = useState(false);
-  
+
   const dropdownRef = useRef(null);
   const accountRef = useRef(null);
 
@@ -157,11 +157,7 @@ function Header({ onCategorySelect }) {
                   <Link to="/wishlist" className="dropdown-item" onClick={() => setAccountOpen(false)}>
                     <span>❤️</span> My Wishlist
                   </Link>
-                  {isAdmin && (
-                    <Link to="/admin" className="dropdown-item flex items-center gap-2 font-medium" onClick={() => setAccountOpen(false)}>
-                      <span>⚙️</span> Admin Dashboard
-                    </Link>
-                  )}
+
                   <button
                     type="button"
                     className="dropdown-item w-full text-left bg-transparent border-0 cursor-pointer flex items-center gap-2 text-red-600 hover:text-red-700"
@@ -256,7 +252,7 @@ function Header({ onCategorySelect }) {
             👤 Log In / Sign Up
           </Link>
         )}
-        
+
         {isLoggedIn && (
           <Link to="/my-orders" onClick={() => setMobileOpen(false)} className="mobile-nav-link">
             📦 My Orders
@@ -267,11 +263,7 @@ function Header({ onCategorySelect }) {
             ❤️ My Wishlist
           </Link>
         )}
-        {isLoggedIn && isAdmin && (
-          <Link to="/admin" onClick={() => setMobileOpen(false)} className="mobile-nav-link text-red-700">
-            ⚙️ Admin Dashboard
-          </Link>
-        )}
+
 
         <button
           type="button"

@@ -273,12 +273,17 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
           </div>
 
           {/* Delivery Note */}
-          <div className="details-delivery-note">
-            <span>🚚 Free delivery</span>
-            <span className="dot-sep">·</span>
-            <span>🔒 Secure payment</span>
-            <span className="dot-sep">·</span>
-            <span>↩ Easy returns</span>
+          <div className="details-delivery-note" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
+            <div style={{ fontSize: '0.9rem', color: '#444', marginBottom: '4px' }}>
+              <strong>Expected Delivery:</strong> {product.deliveryDate}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <span>🚚 Free delivery</span>
+              <span className="dot-sep">·</span>
+              <span>🔒 Secure payment</span>
+              <span className="dot-sep">·</span>
+              <span>↩ Easy returns</span>
+            </div>
           </div>
         </div>
       </section>

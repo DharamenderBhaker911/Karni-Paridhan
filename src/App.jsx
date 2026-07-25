@@ -2,11 +2,14 @@ import { useState } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider, useCart } from "./context/CartContext";
-import { products } from "./data/products";
+import { products as rawProducts } from "./data/products";
+import { enrichProduct } from "./data/productEnricher";
+const products = rawProducts.map(enrichProduct);
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Header from "./components/Header";
-import Hero from "./components/Hero";
+// import Hero from "./components/Hero";
 import ProductGrid from "./components/ProductGrid";
 import ProductPage from "./components/ProductPage";
 import CartDrawer from "./components/CartDrawer";
@@ -35,8 +38,6 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
 import TrackOrderPage from "./pages/TrackOrderPage";
 
-// Admin
-import AdminPage from "./pages/AdminPage";
 
 function StoreFront() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -62,7 +63,7 @@ function StoreFront() {
       <Header onCategorySelect={handleCategorySelect} />
 
       {/* ── Hero ── */}
-      <Hero />
+      {/* <Hero /> */}
 
       {/* ── Offer Banner (Sale Countdown) ── */}
       <OfferBannerSection />
@@ -161,15 +162,7 @@ function App() {
               }
             />
 
-            {/* ── Admin (Protected) ── */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute role="admin">
-                  <AdminPage />
-                </ProtectedRoute>
-              }
-            />
+
           </Routes>
         </CartProvider>
       </AuthProvider>

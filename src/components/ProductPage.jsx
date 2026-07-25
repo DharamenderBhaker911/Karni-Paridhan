@@ -484,11 +484,17 @@ function SimilarProducts({ products, currentId, onOpen }) {
 
 /* ── Sticky Buy Bar (Mobile) ────────────────────────────────────────────── */
 function StickyBuyBar({ price, originalPrice, onAdd, onBuy }) {
+  const disc = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : null;
   return (
     <div className="pdp-sticky-bar">
       <div className="pdp-sticky-price">
         <span className="pdp-sticky-current">{formatPrice(price)}</span>
-        {originalPrice && <s className="pdp-sticky-orig">{formatPrice(originalPrice)}</s>}
+        {originalPrice && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <s className="pdp-sticky-orig">{formatPrice(originalPrice)}</s>
+            {disc > 0 && <span style={{ fontSize: '0.7rem', color: disc === 75 ? '#d32f2f' : '#2e7d32', fontWeight: 'bold' }}>({disc}%)</span>}
+          </div>
+        )}
       </div>
       <div className="pdp-sticky-actions">
         <button className="pdp-sticky-cart" onClick={onAdd}>🛍 Add to Cart</button>
@@ -610,9 +616,16 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
               <div className="pdp-price-row">
                 <span className="pdp-price">{formatPrice(rawProduct.price)}</span>
                 {rawProduct.originalPrice && (
-                  <span className="pdp-mrp">
-                    MRP <s>{formatPrice(rawProduct.originalPrice)}</s>
-                  </span>
+                  <>
+                    <span className="pdp-mrp">
+                      MRP <s>{formatPrice(rawProduct.originalPrice)}</s>
+                    </span>
+                    {disc > 0 && (
+                      <span className="savings-tag" style={disc === 75 ? { backgroundColor: '#d32f2f', color: '#fff', marginLeft: '12px', padding: '4px 8px', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' } : { marginLeft: '12px', padding: '2px 6px', backgroundColor: '#e8f5e9', color: '#2e7d32', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                        {disc === 75 ? 'SALE' : `${disc}% OFF`}
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
               <p className="pdp-tax-note">Inclusive of all taxes</p>

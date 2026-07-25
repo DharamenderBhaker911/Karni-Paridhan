@@ -80,7 +80,7 @@ function ProductGrid({ products, onOpen, onAdd, onBuyNow, activeCategory, setAct
           </p>
         </div>
         <div className="shop-header__right">
-          <span className="shop-sale-badge">🔥 75% OFF — Limited Time</span>
+          <span className="shop-sale-badge">🔥 SALE — Limited Time</span>
         </div>
       </div>
 

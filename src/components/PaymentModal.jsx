@@ -385,7 +385,7 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
               <button className="pm-pay__download-btn" onClick={downloadQR}>⬇ Download QR</button>
             </div>
 
-            <div style={{ marginTop: "16px", marginBottom: "16px", background: "#f9fafb", padding: "12px", borderRadius: "8px", border: "1px dashed #cbd5e1" }}>
+            {/* <div style={{ marginTop: "16px", marginBottom: "16px", background: "#f9fafb", padding: "12px", borderRadius: "8px", border: "1px dashed #cbd5e1" }}>
               <label style={{ display: "block", fontSize: "0.9rem", fontWeight: "600", marginBottom: "8px" }}>
                 Upload Payment Screenshot (Required for verification)
               </label>
@@ -395,17 +395,17 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
                 onChange={e => setScreenshotFile(e.target.files[0])}
                 style={{ fontSize: "0.85rem", width: "100%" }}
               />
-            </div>
+            </div> */}
 
             {/* "I've Paid" confirmation button — triggers WhatsApp + success */}
-            <button
+            {/* <button
               className="pm-pay__confirm-btn"
               onClick={handleUpiClick}
               disabled={isUploading || !screenshotFile}
               style={{ opacity: (!screenshotFile || isUploading) ? 0.5 : 1 }}
             >
               {isUploading ? "Processing..." : "✅ I've Completed Payment"}
-            </button>
+            </button> */}
 
             <div className="pm-pay__or"><span>or open app directly</span></div>
 
