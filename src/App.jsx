@@ -15,8 +15,6 @@ import PaymentModal from "./components/PaymentModal";
 import SalePopup from "./components/SalePopup";
 
 
-import TestimonialsSection from "./components/TestimonialsSection";
-import GallerySection from "./components/GallerySection";
 import OfferBannerSection from "./components/OfferBannerSection";
 
 // Auth pages
@@ -78,13 +76,6 @@ function StoreFront() {
         activeCategory={activeCategory}
         setActiveCategory={setActiveCategory}
       />
-
-
-      {/* ── Gallery ── */}
-      <GallerySection />
-
-      {/* ── Testimonials ── */}
-      <TestimonialsSection />
 
       <Footer />
 
