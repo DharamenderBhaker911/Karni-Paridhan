@@ -2389,7 +2389,7 @@ main {
 
 /* â”€â”€ ADDRESS CARD (two-column layout) â”€â”€ */
 .pm-addr-card {
-  max-width: 520px;
+  max-width: 100vw;
 }
 
 /* Two-column (default, not used now) */
@@ -6418,6 +6418,31 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+}
+
+.pm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: #fff;
+  display: flex;
+  align-items: flex-start; /* start at top instead of center */
+  justify-content: center;
+  padding: 0;
+  overflow-y: auto;
+}
+
+/* ── Shared card shell ── */
+.pm-card {
+  background: #fff;
+  border-radius: 0;
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: none;
 }
 
 .pdp-rating-bar-row {

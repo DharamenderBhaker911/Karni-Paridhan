@@ -29,8 +29,8 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
     () => "#KP" + Date.now().toString(36).toUpperCase().slice(-6)
   );
 
-  // ── 2-minute QR Timer ─────────────────────────────
-  const TIMER_SECONDS = 120;
+  // ── 10-minute QR Timer ─────────────────────────────
+  const TIMER_SECONDS = 600;
   const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
   const timerRef = useRef(null);
 
@@ -384,28 +384,6 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
               <p className="pm-pay__qr-hint">Scan with any UPI app</p>
               <button className="pm-pay__download-btn" onClick={downloadQR}>⬇ Download QR</button>
             </div>
-
-            {/* <div style={{ marginTop: "16px", marginBottom: "16px", background: "#f9fafb", padding: "12px", borderRadius: "8px", border: "1px dashed #cbd5e1" }}>
-              <label style={{ display: "block", fontSize: "0.9rem", fontWeight: "600", marginBottom: "8px" }}>
-                Upload Payment Screenshot (Required for verification)
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={e => setScreenshotFile(e.target.files[0])}
-                style={{ fontSize: "0.85rem", width: "100%" }}
-              />
-            </div> */}
-
-            {/* "I've Paid" confirmation button — triggers WhatsApp + success */}
-            {/* <button
-              className="pm-pay__confirm-btn"
-              onClick={handleUpiClick}
-              disabled={isUploading || !screenshotFile}
-              style={{ opacity: (!screenshotFile || isUploading) ? 0.5 : 1 }}
-            >
-              {isUploading ? "Processing..." : "✅ I've Completed Payment"}
-            </button> */}
 
             <div className="pm-pay__or"><span>or open app directly</span></div>
 

@@ -5,9 +5,7 @@ function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
 
-  const discountPct = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : null;
+  const discountPct = 75;
 
   return (
     <article
