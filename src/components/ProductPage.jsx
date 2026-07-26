@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import { formatPrice } from "../utils/format";
 import { enrichProduct } from "../data/productEnricher";
 import { useWishlist, useToggleWishlist } from "../hooks/useWishlist";
@@ -461,7 +463,7 @@ function SimilarProducts({ products, currentId, onOpen }) {
       </div>
       <div className="pdp-similar-scroll" ref={scrollRef}>
         {similar.map(p => {
-          const disc = p.originalPrice ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100) : null;
+          const disc = 75;
           return (
             <div key={p.id} className="pdp-similar-card" onClick={() => onOpen(p)}>
               <div className="pdp-similar-img-wrap">
@@ -484,7 +486,7 @@ function SimilarProducts({ products, currentId, onOpen }) {
 
 /* ── Sticky Buy Bar (Mobile) ────────────────────────────────────────────── */
 function StickyBuyBar({ price, originalPrice, onAdd, onBuy }) {
-  const disc = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : null;
+  const disc = 75;
   return (
     <div className="pdp-sticky-bar">
       <div className="pdp-sticky-price">
@@ -509,6 +511,8 @@ function StickyBuyBar({ price, originalPrice, onAdd, onBuy }) {
    ═══════════════════════════════════════════════════════════════════════════ */
 export default function ProductPage({ product: rawProduct, allProducts, onClose, onAdd, onBuyNow }) {
   const product = enrichProduct(rawProduct);
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize,  setSelectedSize]  = useState(null);
@@ -555,12 +559,15 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
 
   function handleBuy() {
     if (!validate()) return;
+    if (!isLoggedIn) {
+      onClose();
+      navigate("/login");
+      return;
+    }
     onBuyNow({ ...rawProduct, selectedSize, selectedColor: selectedColor?.name, qty });
   }
 
-  const disc = rawProduct.originalPrice
-    ? Math.round(((rawProduct.originalPrice - rawProduct.price) / rawProduct.originalPrice) * 100)
-    : null;
+  const disc = 75;
 
   return (
     <div className="pdp-shell">

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
 import PaymentModal from "./PaymentModal";
@@ -6,6 +8,8 @@ import PaymentModal from "./PaymentModal";
 const GST_RATE = 0.18;
 
 function CartDrawer() {
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const {
     cartItems,
     cartOpen,
@@ -156,11 +160,17 @@ function CartDrawer() {
               <span>📲 UPI / QR Pay</span>
             </div>
 
-            {/* Checkout Button */}
             <button
               type="button"
               className="checkout-btn"
-              onClick={() => setShowPayment(true)}
+              onClick={() => {
+                if (!isLoggedIn) {
+                  setCartOpen(false);
+                  navigate("/login");
+                } else {
+                  setShowPayment(true);
+                }
+              }}
             >
               <span>Proceed to Pay</span>
               <span className="checkout-amount-chip">{formatPrice(total)}</span>

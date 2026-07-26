@@ -152,10 +152,10 @@ function Header({ onCategorySelect }) {
                 <div className="dropdown-menu" style={{ right: 0, left: "auto", minWidth: "180px" }}>
                   <div className="dropdown-arrow" style={{ right: "1rem", left: "auto" }} />
                   <Link to="/my-orders" className="dropdown-item" onClick={() => setAccountOpen(false)}>
-                    <span>📦</span> My Orders
+                    <span></span> My Orders
                   </Link>
                   <Link to="/wishlist" className="dropdown-item" onClick={() => setAccountOpen(false)}>
-                    <span>❤️</span> My Wishlist
+                    <span></span> My Wishlist
                   </Link>
 
                   <button
@@ -166,7 +166,7 @@ function Header({ onCategorySelect }) {
                       signOut();
                     }}
                   >
-                    <span>👋</span> Sign Out
+                    <span></span> Sign Out
                   </button>
                 </div>
               )}
@@ -194,7 +194,7 @@ function Header({ onCategorySelect }) {
       {/* Mobile Nav */}
       <nav className={`mobile-nav ${mobileOpen ? "open" : ""}`} aria-label="Mobile navigation">
         <Link to="/" onClick={() => setMobileOpen(false)} className="mobile-nav-link">
-          🏠 Home
+          Home
         </Link>
 
         {/* Mobile Category Accordion */}
