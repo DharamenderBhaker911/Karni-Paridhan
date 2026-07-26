@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
+// import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider, useCart } from "./context/CartContext";
 import { products as rawProducts } from "./data/products";
 import { enrichProduct } from "./data/productEnricher";
 const products = rawProducts.map(enrichProduct);
 
-import ProtectedRoute from "./components/ProtectedRoute";
-
+// import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header";
 // import Hero from "./components/Hero";
 import ProductGrid from "./components/ProductGrid";
@@ -20,11 +19,7 @@ import SalePopup from "./components/SalePopup";
 
 import OfferBannerSection from "./components/OfferBannerSection";
 
-// Auth pages
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import UpdatePasswordPage from "./pages/UpdatePasswordPage";
+// Auth pages removed
 
 // New pages
 import AboutPage from "./pages/AboutPage";
@@ -122,50 +117,33 @@ function StoreFront() {
 function App() {
   return (
     <HashRouter>
-      <AuthProvider>
-        <CartProvider>
-          <Routes>
-            {/* ── Storefront / Home ── */}
-            <Route path="/" element={<StoreFront />} />
+      <CartProvider>
+        <Routes>
+          {/* ── Storefront / Home ── */}
+          <Route path="/" element={<StoreFront />} />
 
-            {/* ── Auth ── */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/update-password" element={<UpdatePasswordPage />} />
+          {/* ── Info Pages ── */}
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/size-guide" element={<SizeGuidePage />} />
+          <Route path="/shipping-returns" element={<ShippingReturnsPage />} />
+          <Route path="/faqs" element={<FaqsPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/track-order" element={<TrackOrderPage />} />
 
-            {/* ── Info Pages ── */}
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/size-guide" element={<SizeGuidePage />} />
-            <Route path="/shipping-returns" element={<ShippingReturnsPage />} />
-            <Route path="/faqs" element={<FaqsPage />} />
-            <Route path="/privacy" element={<PrivacyPolicyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/track-order" element={<TrackOrderPage />} />
+          {/* ── User Account (Public now) ── */}
+          <Route
+            path="/my-orders"
+            element={<MyOrdersPage />}
+          />
+          <Route
+            path="/wishlist"
+            element={<WishlistPage />}
+          />
 
-            {/* ── User Account (Protected) ── */}
-            <Route
-              path="/my-orders"
-              element={
-                <ProtectedRoute>
-                  <MyOrdersPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/wishlist"
-              element={
-                <ProtectedRoute>
-                  <WishlistPage />
-                </ProtectedRoute>
-              }
-            />
-
-
-          </Routes>
-        </CartProvider>
-      </AuthProvider>
+        </Routes>
+      </CartProvider>
     </HashRouter>
   );
 }

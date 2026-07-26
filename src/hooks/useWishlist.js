@@ -1,37 +1,41 @@
 /**
  * useWishlist — TanStack Query hooks for wishlist data
  *
- * Wishlist is user-scoped. Guest users get an empty list with a prompt to login.
+ * Wishlist is now stored in localStorage since authentication was removed.
  *
  * @module hooks/useWishlist
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getWishlist, toggleWishlist } from "../services/wishlist";
-import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
 
 export const wishlistKeys = {
   all: ["wishlist"],
-  user: (userId) => ["wishlist", userId],
+  local: () => ["wishlist", "local"],
+};
+
+const getLocalWishlist = () => {
+  try {
+    const saved = localStorage.getItem("karni_wishlist");
+    return saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+const setLocalWishlist = (list) => {
+  localStorage.setItem("karni_wishlist", JSON.stringify(list));
 };
 
 /**
- * Fetch the current user's wishlist (array of product IDs).
- * Returns an empty array for guests (no error, no network call).
+ * Fetch the wishlist from localStorage
  */
 export function useWishlist() {
-  const { user } = useAuth();
-
   return useQuery({
-    queryKey: wishlistKeys.user(user?.id),
+    queryKey: wishlistKeys.local(),
     queryFn: async () => {
-      const { data, error } = await getWishlist(user.id);
-      if (error) throw error;
-      return data ?? [];
+      return getLocalWishlist();
     },
-    enabled: !!user?.id,
-    staleTime: 1000 * 60 * 5, // 5 minutes — wishlist doesn't change often
-    placeholderData: [], // show empty wishlist while loading
+    staleTime: Infinity, // never stale since it's local
   });
 }
 
@@ -40,22 +44,26 @@ export function useWishlist() {
  */
 export function useToggleWishlist() {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({ productId, isCurrentlyWishlisted }) => {
-      if (!user?.id) throw new Error("Please log in to save to wishlist");
-      return toggleWishlist(user.id, productId, isCurrentlyWishlisted);
+      const currentList = getLocalWishlist();
+      let newList;
+      if (isCurrentlyWishlisted) {
+        newList = currentList.filter(id => id !== productId);
+      } else {
+        newList = [...currentList, productId];
+      }
+      setLocalWishlist(newList);
+      return newList;
     },
 
-    // Optimistic update — flip the icon immediately without waiting for server
     onMutate: async ({ productId, isCurrentlyWishlisted }) => {
-      if (!user?.id) return;
-      await queryClient.cancelQueries({ queryKey: wishlistKeys.user(user.id) });
+      await queryClient.cancelQueries({ queryKey: wishlistKeys.local() });
 
-      const previousWishlist = queryClient.getQueryData(wishlistKeys.user(user.id));
+      const previousWishlist = queryClient.getQueryData(wishlistKeys.local());
 
-      queryClient.setQueryData(wishlistKeys.user(user.id), (old = []) => {
+      queryClient.setQueryData(wishlistKeys.local(), (old = []) => {
         if (isCurrentlyWishlisted) {
           return old.filter((id) => id !== productId);
         }
@@ -66,18 +74,13 @@ export function useToggleWishlist() {
     },
 
     onError: (error, _variables, context) => {
-      // Rollback on error
-      if (context?.previousWishlist && user?.id) {
+      if (context?.previousWishlist) {
         queryClient.setQueryData(
-          wishlistKeys.user(user.id),
+          wishlistKeys.local(),
           context.previousWishlist
         );
       }
-      toast.error(
-        error.message === "Please log in to save to wishlist"
-          ? "❤️ Please log in to save items to wishlist"
-          : "Could not update wishlist. Try again."
-      );
+      toast.error("Could not update wishlist. Try again.");
     },
 
     onSuccess: (_data, { isCurrentlyWishlisted }) => {
@@ -87,10 +90,7 @@ export function useToggleWishlist() {
     },
 
     onSettled: () => {
-      // Always refetch to ensure server state is accurate
-      if (user?.id) {
-        queryClient.invalidateQueries({ queryKey: wishlistKeys.user(user.id) });
-      }
+      queryClient.invalidateQueries({ queryKey: wishlistKeys.local() });
     },
   });
 }

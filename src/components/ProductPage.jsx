@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 import { formatPrice } from "../utils/format";
 import { enrichProduct } from "../data/productEnricher";
 import { useWishlist, useToggleWishlist } from "../hooks/useWishlist";
@@ -512,7 +511,6 @@ function StickyBuyBar({ price, originalPrice, onAdd, onBuy }) {
 export default function ProductPage({ product: rawProduct, allProducts, onClose, onAdd, onBuyNow }) {
   const product = enrichProduct(rawProduct);
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
 
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -559,11 +557,6 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
 
   function handleBuy() {
     if (!validate()) return;
-    if (!isLoggedIn) {
-      onClose();
-      navigate("/login");
-      return;
-    }
     onBuyNow({ ...rawProduct, selectedSize, selectedColor: selectedColor?.name, qty });
   }
 

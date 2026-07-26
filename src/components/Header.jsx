@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { images } from "../data/products";
 import { useCart } from "../context/CartContext";
-import { useAuth } from "../contexts/AuthContext";
 
 const categories = [
   { label: "Anarkali", href: "#products", icon: "🌸" },
@@ -14,7 +13,7 @@ const categories = [
 
 function Header({ onCategorySelect }) {
   const { cartCount, setCartOpen } = useCart();
-  const { isLoggedIn, isAdmin, signOut, profile } = useAuth();
+
   const navigate = useNavigate();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -138,44 +137,27 @@ function Header({ onCategorySelect }) {
         {/* Actions — Right Side */}
         <div className="header-actions flex items-center gap-2">
           {/* Account */}
-          {isLoggedIn ? (
-            <div className="nav-dropdown relative" ref={accountRef}>
-              <button
-                type="button"
-                className={`nav-link nav-dropdown-trigger flex items-center gap-1 ${accountOpen ? "active" : ""}`}
-                onClick={() => setAccountOpen((v) => !v)}
-              >
-                <span className="text-xl">👤</span>
-                <span className="hidden md:inline max-w-[100px] truncate">{profile?.full_name || "Account"}</span>
-              </button>
-              {accountOpen && (
-                <div className="dropdown-menu" style={{ right: 0, left: "auto", minWidth: "180px" }}>
-                  <div className="dropdown-arrow" style={{ right: "1rem", left: "auto" }} />
-                  <Link to="/my-orders" className="dropdown-item" onClick={() => setAccountOpen(false)}>
-                    <span></span> My Orders
-                  </Link>
-                  <Link to="/wishlist" className="dropdown-item" onClick={() => setAccountOpen(false)}>
-                    <span></span> My Wishlist
-                  </Link>
-
-                  <button
-                    type="button"
-                    className="dropdown-item w-full text-left bg-transparent border-0 cursor-pointer flex items-center gap-2 text-red-600 hover:text-red-700"
-                    onClick={() => {
-                      setAccountOpen(false);
-                      signOut();
-                    }}
-                  >
-                    <span></span> Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Link to="/login" className="nav-link hidden md:flex items-center gap-1">
-              <span>👤</span> Log In
-            </Link>
-          )}
+          <div className="nav-dropdown relative" ref={accountRef}>
+            {/* <button
+              type="button"
+              className={`nav-link nav-dropdown-trigger flex items-center gap-1 ${accountOpen ? "active" : ""}`}
+              onClick={() => setAccountOpen((v) => !v)}
+            >
+              <span className="text-xl">👤</span>
+              <span className="hidden md:inline max-w-[100px] truncate">Account</span>
+            </button> */}
+            {accountOpen && (
+              <div className="dropdown-menu" style={{ right: 0, left: "auto", minWidth: "180px" }}>
+                <div className="dropdown-arrow" style={{ right: "1rem", left: "auto" }} />
+                <Link to="/my-orders" className="dropdown-item" onClick={() => setAccountOpen(false)}>
+                  <span>📦</span> My Orders
+                </Link>
+                <Link to="/wishlist" className="dropdown-item" onClick={() => setAccountOpen(false)}>
+                  <span>❤️</span> My Wishlist
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* Cart */}
           <button
@@ -246,24 +228,12 @@ function Header({ onCategorySelect }) {
           📞 Contact Us
         </Link>
 
-        {/* Mobile Auth */}
-        {!isLoggedIn && (
-          <Link to="/login" onClick={() => setMobileOpen(false)} className="mobile-nav-link">
-            👤 Log In / Sign Up
-          </Link>
-        )}
-
-        {isLoggedIn && (
-          <Link to="/my-orders" onClick={() => setMobileOpen(false)} className="mobile-nav-link">
-            📦 My Orders
-          </Link>
-        )}
-        {isLoggedIn && (
-          <Link to="/wishlist" onClick={() => setMobileOpen(false)} className="mobile-nav-link">
-            ❤️ My Wishlist
-          </Link>
-        )}
-
+        <Link to="/my-orders" onClick={() => setMobileOpen(false)} className="mobile-nav-link">
+          📦 My Orders
+        </Link>
+        <Link to="/wishlist" onClick={() => setMobileOpen(false)} className="mobile-nav-link">
+          ❤️ My Wishlist
+        </Link>
 
         <button
           type="button"
@@ -273,19 +243,6 @@ function Header({ onCategorySelect }) {
         >
           🛍 View Cart ({cartCount})
         </button>
-
-        {isLoggedIn && (
-          <button
-            type="button"
-            className="mobile-nav-link bg-transparent border-0 text-left w-full mt-4 text-red-600"
-            onClick={() => {
-              setMobileOpen(false);
-              signOut();
-            }}
-          >
-            👋 Sign Out
-          </button>
-        )}
       </nav>
     </>
   );

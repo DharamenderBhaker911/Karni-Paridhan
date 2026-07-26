@@ -1,101 +1,103 @@
 /**
  * useOrders — TanStack Query hooks for order data
  *
- * All hooks handle loading, error, and success states automatically.
- * Cache is invalidated after mutations so the UI stays fresh.
+ * Orders are saved to localStorage for the user's history,
+ * and pushed to the server via services/orders.
  *
  * @module hooks/useOrders
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  getUserOrders,
-  getAllOrders,
-  createOrder,
-  updateOrderStatus,
-} from "../services/orders";
-import { useAuth } from "../contexts/AuthContext";
+import { createOrder, updateOrderStatus } from "../services/orders";
 import toast from "react-hot-toast";
 
-/** Query key factory — keeps keys consistent and easy to invalidate */
 export const orderKeys = {
   all: ["orders"],
-  user: (userId) => ["orders", "user", userId],
-  admin: (filters) => ["orders", "admin", filters],
+  local: () => ["orders", "local"],
 };
 
-/* ─── Queries ──────────────────────────────────────────────────────────────── */
+const getLocalOrders = () => {
+  try {
+    const saved = localStorage.getItem("karni_orders");
+    return saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+const saveLocalOrder = (order) => {
+  const currentOrders = getLocalOrders();
+  // Ensure the order has a timestamp
+  const newOrder = {
+    ...order,
+    created_at: order.created_at || new Date().toISOString()
+  };
+  localStorage.setItem("karni_orders", JSON.stringify([newOrder, ...currentOrders]));
+  return newOrder;
+};
 
 /**
- * Fetch orders for the currently logged-in user.
+ * Fetch orders from localStorage (since we removed auth).
  */
 export function useUserOrders() {
-  const { user } = useAuth();
-
   return useQuery({
-    queryKey: orderKeys.user(user?.id),
+    queryKey: orderKeys.local(),
     queryFn: async () => {
-      const { data, error } = await getUserOrders(user.id);
-      if (error) throw error;
-      return data;
+      return getLocalOrders();
     },
-    enabled: !!user?.id,
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: Infinity, // never stale since it's local
   });
 }
 
 /**
  * Fetch all orders (admin only).
- * Supabase RLS will return an empty array or error for non-admins.
- *
- * @param {Object} [filters]
- * @param {string} [filters.status]
- * @param {string} [filters.search]
  */
 export function useAllOrders(filters = {}) {
+  // Without auth, admin frontend isn't easily accessible
   return useQuery({
-    queryKey: orderKeys.admin(filters),
+    queryKey: orderKeys.all,
     queryFn: async () => {
-      const { data, error } = await getAllOrders(filters);
-      if (error) throw error;
-      return data;
+      return [];
     },
-    staleTime: 1000 * 30, // 30 seconds — admin sees fresher data
+    staleTime: Infinity,
   });
 }
-
-/* ─── Mutations ────────────────────────────────────────────────────────────── */
 
 /**
  * Mutation to create a new order.
- * Shows toast on success/error.
- * On success, invalidates user order cache.
+ * Saves to localStorage AND attempts to push to Supabase.
  */
 export function useCreateOrder() {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   return useMutation({
-    mutationFn: (orderData) =>
-      createOrder({ ...orderData, userId: user?.id ?? null }),
-    onSuccess: () => {
-      // Invalidate user orders so "My Orders" page refreshes
-      if (user?.id) {
-        queryClient.invalidateQueries({ queryKey: orderKeys.user(user.id) });
+    mutationFn: async (orderData) => {
+      // 1. Save to local storage
+      const localOrder = saveLocalOrder(orderData);
+      
+      // 2. Attempt to save to Supabase (fire and forget, might fail if RLS requires auth)
+      try {
+        // The parameters expected by createOrder in services/orders.js are different
+        // PaymentModal seems to pass raw fields if we look at how it calls createOrder
+        // Wait, PaymentModal actually calls createOrder with a flat object, we should just pass it through
+        await createOrder(orderData);
+      } catch (e) {
+        console.warn("Failed to push order to Supabase:", e);
       }
-      // Note: success toast is shown in the component for better UX sequencing
+
+      return localOrder;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: orderKeys.local() });
     },
     onError: (error) => {
       console.error("[useCreateOrder] Error:", error);
-      toast.error("Failed to save order. Please screenshot your order details.");
+      toast.error("Failed to save order locally. Please screenshot your order details.");
     },
   });
 }
 
 /**
- * Mutation to update order status (admin only).
- * Shows toast on success/error.
- *
- * @returns {import('@tanstack/react-query').UseMutationResult}
+ * Mutation to update order status.
  */
 export function useUpdateOrderStatus() {
   const queryClient = useQueryClient();
@@ -103,8 +105,7 @@ export function useUpdateOrderStatus() {
   return useMutation({
     mutationFn: ({ id, status }) => updateOrderStatus(id, status),
     onSuccess: (data) => {
-      toast.success(`Order ${data.data?.order_id} → ${data.data?.status}`);
-      // Invalidate all admin order queries
+      toast.success(`Order updated`);
       queryClient.invalidateQueries({ queryKey: orderKeys.all });
     },
     onError: (error) => {

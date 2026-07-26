@@ -1,50 +1,23 @@
 import { createContext, useContext, useMemo, useState, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
-import {
-  fetchCart,
-  upsertCartItem,
-  removeCartItem,
-  clearCart as clearCartSupabase,
-  syncCartToServer,
-} from "../services/cart";
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem("karni_cart");
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn("Failed to load cart from localStorage", e);
+    }
+    return [];
+  });
   const [cartOpen, setCartOpen] = useState(false);
-  const { user } = useAuth();
 
-  // On login, fetch server cart and merge with any local items
+  // Sync to localStorage on change
   useEffect(() => {
-    if (!user) return;
-
-    fetchCart(user.id).then(({ data: serverItems }) => {
-      if (!serverItems) return;
-
-      setCartItems((localItems) => {
-        if (localItems.length === 0) return serverItems;
-
-        // Merge: add quantities for duplicates
-        const merged = [...serverItems];
-        localItems.forEach((localItem) => {
-          const key = `${localItem.id}-${localItem.selectedSize ?? ""}`;
-          const existing = merged.find(
-            (i) => `${i.id}-${i.selectedSize ?? ""}` === key
-          );
-          if (existing) {
-            existing.qty += localItem.qty;
-          } else {
-            merged.push(localItem);
-          }
-        });
-
-        // Sync merged result back to server
-        syncCartToServer(user.id, merged);
-        return merged;
-      });
-    });
-  }, [user]);
+    localStorage.setItem("karni_cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const cartCount = useMemo(
     () => cartItems.reduce((total, item) => total + item.qty, 0),
@@ -81,10 +54,7 @@ export function CartProvider({ children }) {
       return [...current, newItem];
     });
 
-    // Fire and forget to Supabase
-    if (user) {
-      setTimeout(() => upsertCartItem(user.id, updatedItem), 0);
-    }
+
 
     setCartOpen(true);
   };
@@ -103,16 +73,10 @@ export function CartProvider({ children }) {
     setCartItems((current) =>
       current.filter((item) => !(item.id === id && item.selectedSize === selectedSize))
     );
-    if (user) {
-      removeCartItem(user.id, id, selectedSize);
-    }
   };
 
   const clearCart = () => {
     setCartItems([]);
-    if (user) {
-      clearCartSupabase(user.id);
-    }
   };
 
   const updateQuantityItem = (item, qty) => {
@@ -123,9 +87,7 @@ export function CartProvider({ children }) {
     setCartItems((current) =>
       current.map((i) => {
         if (i.id === item.id && i.selectedSize === item.selectedSize) {
-          const updated = { ...i, qty };
-          if (user) upsertCartItem(user.id, updated);
-          return updated;
+          return { ...i, qty };
         }
         return i;
       })
