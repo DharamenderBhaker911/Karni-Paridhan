@@ -68,7 +68,7 @@ function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
         </div>
 
         <div className="pc__delivery" style={{ fontSize: '0.75rem', color: '#666', marginTop: '4px', marginBottom: '8px' }}>
-          Expected Delivery: <span style={{ fontWeight: 600, color: '#333' }}>{product.deliveryDate}</span>
+          <span style={{ fontWeight: 600, color: '#1A5C3A' }}>Free Delivery & 7 Days Replacement</span>
         </div>
 
         {/* Sizes strip */}

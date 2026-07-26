@@ -7,19 +7,19 @@ import { useWishlist, useToggleWishlist } from "../hooks/useWishlist";
 
 /* ─── Icon helpers (inline SVG for zero-dep) ──────────────────────────── */
 const Ico = {
-  Close:   () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>,
-  Back:    () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5m0 0 7 7m-7-7 7-7"/></svg>,
-  Heart:   ({filled}) => <svg viewBox="0 0 24 24" fill={filled?"currentColor":"none"} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
-  Zoom:    () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M8 11h6"/></svg>,
-  Share:   () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg>,
-  Truck:   () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 5v3h-7V8zM5.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM18.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/></svg>,
-  Return:  () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>,
-  Lock:    () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
-  COD:     () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>,
-  Star:    () => <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>,
-  Chevron: ({dir="down"}) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{transform: dir==="up"?"rotate(180deg)":dir==="left"?"rotate(90deg)":dir==="right"?"rotate(-90deg)":"none"}}><path d="m6 9 6 6 6-6"/></svg>,
-  Ruler:   () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.3 8.7 8.7 21.3c-.4.4-.9.6-1.4.6H4a2 2 0 0 1-2-2v-3.3c0-.5.2-1 .6-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4z"/><path d="m7.5 10.5 2 2m.5-4.5 2 2m.5-4.5 2 2"/></svg>,
-  ChevronRight: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>,
+  Close: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" /></svg>,
+  Back: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5m0 0 7 7m-7-7 7-7" /></svg>,
+  Heart: ({ filled }) => <svg viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>,
+  Zoom: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35M11 8v6M8 11h6" /></svg>,
+  Share: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" /></svg>,
+  Truck: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13" /><path d="M16 8h4l3 5v3h-7V8zM5.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM18.5 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" /></svg>,
+  Return: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>,
+  Lock: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>,
+  COD: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></svg>,
+  Star: () => <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>,
+  Chevron: ({ dir = "down" }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: dir === "up" ? "rotate(180deg)" : dir === "left" ? "rotate(90deg)" : dir === "right" ? "rotate(-90deg)" : "none" }}><path d="m6 9 6 6 6-6" /></svg>,
+  Ruler: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.3 8.7 8.7 21.3c-.4.4-.9.6-1.4.6H4a2 2 0 0 1-2-2v-3.3c0-.5.2-1 .6-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4z" /><path d="m7.5 10.5 2 2m.5-4.5 2 2m.5-4.5 2 2" /></svg>,
+  ChevronRight: () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>,
 };
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -55,7 +55,7 @@ function ProductGallery({ images, productName }) {
   const [zoomed, setZoomed] = useState(false);
   const [loaded, setLoaded] = useState({});
   const touchStart = useRef(null);
-  const touchEnd   = useRef(null);
+  const touchEnd = useRef(null);
 
   useEffect(() => { setActive(0); setLoaded({}); }, [images]);
 
@@ -64,15 +64,15 @@ function ProductGallery({ images, productName }) {
   }, [images.length]);
 
   function onTouchStart(e) { touchStart.current = e.targetTouches[0].clientX; }
-  function onTouchMove(e)  { touchEnd.current   = e.targetTouches[0].clientX; }
-  function onTouchEnd()    {
+  function onTouchMove(e) { touchEnd.current = e.targetTouches[0].clientX; }
+  function onTouchEnd() {
     if (!touchStart.current || !touchEnd.current) return;
     const dist = touchStart.current - touchEnd.current;
     if (Math.abs(dist) > 40) go(dist > 0 ? 1 : -1);
     touchStart.current = touchEnd.current = null;
   }
 
-  function onImgLoad(i) { setLoaded(p => ({...p, [i]: true})); }
+  function onImgLoad(i) { setLoaded(p => ({ ...p, [i]: true })); }
 
   return (
     <>
@@ -120,7 +120,7 @@ function ProductGallery({ images, productName }) {
             <>
               <span className="pdp-img-counter">{active + 1} / {images.length}</span>
               <button className="pdp-gallery-arrow pdp-gallery-arrow--prev" onClick={() => go(-1)} aria-label="Previous"><Ico.Chevron dir="left" /></button>
-              <button className="pdp-gallery-arrow pdp-gallery-arrow--next" onClick={() => go(1)}  aria-label="Next"><Ico.Chevron dir="right" /></button>
+              <button className="pdp-gallery-arrow pdp-gallery-arrow--next" onClick={() => go(1)} aria-label="Next"><Ico.Chevron dir="right" /></button>
             </>
           )}
           <button className="pdp-zoom-btn" onClick={() => setZoomed(true)} aria-label="Zoom"><Ico.Zoom /></button>
@@ -144,7 +144,7 @@ function ProductGallery({ images, productName }) {
           {images.length > 1 && (
             <>
               <button className="pdp-lightbox-arrow pdp-lightbox-arrow--prev" onClick={e => { e.stopPropagation(); go(-1); }}><Ico.Chevron dir="left" /></button>
-              <button className="pdp-lightbox-arrow pdp-lightbox-arrow--next" onClick={e => { e.stopPropagation(); go(1);  }}><Ico.Chevron dir="right" /></button>
+              <button className="pdp-lightbox-arrow pdp-lightbox-arrow--next" onClick={e => { e.stopPropagation(); go(1); }}><Ico.Chevron dir="right" /></button>
             </>
           )}
         </div>
@@ -226,7 +226,7 @@ function SizeSelector({ sizes, selected, onSelect, availableSizes, sizeError, on
 function QuantitySelector({ qty, setQty }) {
   return (
     <div className="pdp-qty-wrap">
-      <span className="pdp-section-label" style={{marginBottom:0}}>Qty</span>
+      <span className="pdp-section-label" style={{ marginBottom: 0 }}>Qty</span>
       <div className="pdp-qty">
         <button onClick={() => setQty(q => Math.max(1, q - 1))} aria-label="Decrease">−</button>
         <span>{qty}</span>
@@ -239,9 +239,9 @@ function QuantitySelector({ qty, setQty }) {
 /* ── Trust Badges ───────────────────────────────────────────────────────── */
 function TrustBadges() {
   const badges = [
-    { icon: <Ico.Truck />,  label: "Free Shipping",  sub: "On all orders" },
-    { icon: <Ico.Return />, label: "Easy Returns",    sub: "7-day policy" },
-    { icon: <Ico.Lock />,   label: "Secure Payment",  sub: "100% encrypted" },
+    { icon: <Ico.Truck />, label: "Free Shipping", sub: "On all orders" },
+    { icon: <Ico.Return />, label: "Easy Returns", sub: "7-day policy" },
+    { icon: <Ico.Lock />, label: "Secure Payment", sub: "100% encrypted" },
   ];
   return (
     <div className="pdp-trust">
@@ -455,7 +455,7 @@ function SimilarProducts({ products, currentId, onOpen }) {
   return (
     <div className="pdp-block">
       <div className="pdp-block-header">
-        <h3 className="pdp-block-title" style={{marginBottom:0}}>Similar Products</h3>
+        <h3 className="pdp-block-title" style={{ marginBottom: 0 }}>Similar Products</h3>
         <div className="pdp-carousel-btns">
           <button onClick={() => scroll(-1)}><Ico.Chevron dir="left" /></button>
           <button onClick={() => scroll(1)}><Ico.ChevronRight /></button>
@@ -500,7 +500,7 @@ function StickyBuyBar({ price, originalPrice, onAdd, onBuy }) {
       </div>
       <div className="pdp-sticky-actions">
         <button className="pdp-sticky-cart" onClick={onAdd}>🛍 Add to Cart</button>
-        <button className="pdp-sticky-buy"  onClick={onBuy}>⚡ Buy Now</button>
+        <button className="pdp-sticky-buy" onClick={onBuy}>⚡ Buy Now</button>
       </div>
     </div>
   );
@@ -515,9 +515,9 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
   const { isLoggedIn } = useAuth();
 
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [selectedSize,  setSelectedSize]  = useState(null);
-  const [qty,           setQty]           = useState(1);
-  const [sizeError,     setSizeError]     = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [qty, setQty] = useState(1);
+  const [sizeError, setSizeError] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const sizeRef = useRef(null);
 
@@ -628,8 +628,8 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
                       MRP <s>{formatPrice(rawProduct.originalPrice)}</s>
                     </span>
                     {disc > 0 && (
-                      <span className="savings-tag" style={disc === 75 ? { backgroundColor: '#d32f2f', color: '#fff', marginLeft: '12px', padding: '4px 8px', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' } : { marginLeft: '12px', padding: '2px 6px', backgroundColor: '#e8f5e9', color: '#2e7d32', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                        {disc === 75 ? 'SALE' : `${disc}% OFF`}
+                      <span className="savings-tag" style={{ backgroundColor: '#d32f2f', color: '#fff', marginLeft: '12px', padding: '4px 8px', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                        {disc}% OFF
                       </span>
                     )}
                   </>
@@ -638,9 +638,41 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
               <p className="pdp-tax-note">Inclusive of all taxes</p>
 
               {/* Stock + Delivery */}
-              <div className="pdp-availability">
+              <div className="pdp-availability" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                 <span className="pdp-in-stock">● In Stock</span>
-                <span className="pdp-delivery">🚚 Delivery by <strong>{product.deliveryDate}</strong></span>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  {/* Button 1: Free Delivery */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: '#fafafa',
+                    border: '1px solid #e0e0e0',
+                    padding: '8px 14px',
+                    borderRadius: '6px',
+                    color: '#263f22ff',
+                    boxShadow: '0 1px 2px rgba(63, 105, 57, 0.03)'
+                  }}>
+                    <div style={{ width: '18px', height: '18px', color: '#555' }}><Ico.Truck /></div>
+                    <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>Free Delivery</span>
+                  </div>
+
+                  {/* Button 2: 7 Days Replacement */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    backgroundColor: '#fafafa',
+                    border: '1px solid #e0e0e0',
+                    padding: '8px 14px',
+                    borderRadius: '6px',
+                    color: '#30492fff',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+                  }}>
+                    <div style={{ width: '18px', height: '18px', color: '#555' }}><Ico.Return /></div>
+                    <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>7 Days Replacement</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -665,7 +697,7 @@ export default function ProductPage({ product: rawProduct, allProducts, onClose,
             {/* CTA Buttons (desktop) */}
             <div className="pdp-cta-row">
               <button className="pdp-btn-cart" onClick={handleAdd}>🛍 Add to Cart</button>
-              <button className="pdp-btn-buy"  onClick={handleBuy}>⚡ Buy Now</button>
+              <button className="pdp-btn-buy" onClick={handleBuy}>⚡ Buy Now</button>
             </div>
 
             {/* Trust Badges */}

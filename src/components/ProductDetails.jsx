@@ -275,7 +275,7 @@ function ProductDetails({ product, onClose, onAdd, onBuyNow }) {
           {/* Delivery Note */}
           <div className="details-delivery-note" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
             <div style={{ fontSize: '0.9rem', color: '#444', marginBottom: '4px' }}>
-              <strong>Expected Delivery:</strong> {product.deliveryDate}
+              <strong>Free Delivery & 7 Days Replacement</strong>
             </div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <span>🚚 Free delivery</span>

@@ -244,24 +244,21 @@ const SIZE_GUIDE = {
 export function enrichProduct(product) {
   const cat = product.category;
 
-  // Determine if this product should be part of the 75% OFF sale (approx 20% of products)
-  const charSum = product.id.toString().split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  const is75OffSale = charSum % 5 === 0;
+  let minPrice = 1000;
+  let maxPrice = 3000;
 
-  let enrichedPrice = product.price;
-  let enrichedOriginalPrice = product.originalPrice;
+  if (cat === "Rajputi Posak") { minPrice = 2400; maxPrice = 4000; }
+  else if (cat === "Kurta-Set") { minPrice = 1000; maxPrice = 2200; }
+  else if (cat === "Anarkali") { minPrice = 1000; maxPrice = 2000; }
+  else if (cat === "Suit") { minPrice = 1000; maxPrice = 3000; }
+  else if (cat === "Purse") { minPrice = 700; maxPrice = 2000; }
 
-  if (is75OffSale) {
-    if (enrichedOriginalPrice) {
-      enrichedPrice = Math.round(enrichedOriginalPrice * 0.25);
-    } else if (enrichedPrice) {
-      enrichedOriginalPrice = enrichedPrice * 4;
-    }
-  } else {
-    // If not on the special 75% OFF sale, do not show any discount.
-    // The current price remains, but we remove the originalPrice so it doesn't calculate a discount.
-    enrichedOriginalPrice = null;
-  }
+  // Use a pseudo-random seeded price based on product ID so it's consistent
+  const seed = product.id.toString().split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const rand = ((seed * 9301 + 49297) % 233280) / 233280;
+  
+  const enrichedPrice = Math.floor(minPrice + rand * (maxPrice - minPrice));
+  const enrichedOriginalPrice = enrichedPrice * 4;
 
   product = {
     ...product,
