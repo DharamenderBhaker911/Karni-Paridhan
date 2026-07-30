@@ -6,8 +6,8 @@ import { supabase } from "../supabase/client";
 
 const UPI_ID = "bhaninder233@okaxis";
 const PAYEE_NAME = "Bhaninder Singh Baghel";
-const GST_RATE = 0.18;
-const SHOP_WA = "916376614836";
+
+const SHOP_WA = "919784842239";
 
 const paytmLogo = "https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg";
 const gpayLogo = "https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg";
@@ -39,10 +39,7 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
   const { mutate: createOrder } = useCreateOrder();
 
   const base = subtotal;
-  const gst = Math.round(base * GST_RATE);
-  const cgst = Math.round(gst / 2);
-  const sgst = gst - cgst;
-  const total = base + gst;
+  const total = base; // No GST applied
   const upiUrl = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${total.toFixed(2)}&tn=${orderId}`;
 
   // Customer WhatsApp number
@@ -92,7 +89,7 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
   }, [step]);
 
   function upiLink(pkg) {
-    const p = `pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${total.toFixed(2)}&tn=${orderId}`;
+    const p = `pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${base.toFixed(2)}&tn=${orderId}`;
     if (/Android/i.test(navigator.userAgent))
       return `intent://pay?${p}#Intent;scheme=upi;package=${pkg};end`;
     if (/iPhone|iPad/i.test(navigator.userAgent)) {
@@ -114,8 +111,6 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `💰 *YOUR BILL*\n` +
       `Item Price : ₹${base.toFixed(2)}\n` +
-      `CGST (9%)  : ₹${cgst.toFixed(2)}\n` +
-      `SGST (9%)  : ₹${sgst.toFixed(2)}\n` +
       `Delivery   : FREE 🚚\n` +
       `*Total Paid: ₹${total.toFixed(2)}*\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
@@ -140,7 +135,6 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `💰 *BILL*\n` +
       `Item : ₹${base.toFixed(2)}\n` +
-      `GST  : ₹${gst.toFixed(2)}\n` +
       `*Total: ₹${total.toFixed(2)}*\n` +
       `UPI: ${UPI_ID}\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
@@ -325,7 +319,7 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
 
 
 
-          {/* SECTION 1: Amount + GST (visible first) */}
+          {/* SECTION 1: Amount (visible first) */}
           <div className="pm-pay__bill-section">
             <p className="pm-pay__bill-eyebrow">Order Summary</p>
             {productName && (
@@ -342,8 +336,6 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
 
             <div className="pm-pay__gst-breakdown">
               <div className="pm-pay__gst-row"><span>Item Price</span><span>₹{base.toFixed(2)}</span></div>
-              <div className="pm-pay__gst-row"><span>CGST @ 9%</span><span>+₹{cgst.toFixed(2)}</span></div>
-              <div className="pm-pay__gst-row"><span>SGST @ 9%</span><span>+₹{sgst.toFixed(2)}</span></div>
               <div className="pm-pay__gst-row"><span>Delivery</span><span className="pm-pay__free">FREE</span></div>
               <div className="pm-pay__gst-total"><span>Total Payable</span><span>₹{total.toFixed(2)}</span></div>
             </div>

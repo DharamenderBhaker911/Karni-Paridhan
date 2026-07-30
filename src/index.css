@@ -1355,6 +1355,8 @@ main {
   gap: 0.4rem;
   margin-top: auto;
   padding-top: 0.55rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .pc__btn {
@@ -1388,6 +1390,29 @@ main {
 .pc__btn--buy:hover {
   background: linear-gradient(135deg, #5a1229, #7b1c3a);
   transform: translateY(-1px);
+}
+
+.pc__btn--wa {
+  background: linear-gradient(135deg, #128c7e, #25d366);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  text-decoration: none;
+  grid-column: 1 / -1;
+  padding: 0.5rem 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 0.45rem;
+  box-shadow: 0 2px 8px rgba(37,211,102,0.25);
+  transition: all 0.16s;
+}
+
+.pc__btn--wa:hover {
+  background: linear-gradient(135deg, #0e7a6e, #1db954);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37,211,102,0.35);
 }
 
 /* â”€â”€â”€ PRODUCT DETAILS MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -1817,7 +1842,8 @@ main {
 
 /* Details CTA */
 .details-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
   margin-top: 0.5rem;
 }
@@ -1829,6 +1855,30 @@ main {
   border-radius: var(--radius-md);
   white-space: nowrap;
   font-weight: 700;
+}
+
+.whatsapp-enquiry-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  grid-column: 1 / -1;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(135deg, #128c7e, #25d366);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(37, 211, 102, 0.3);
+  transition: all 0.18s ease;
+  letter-spacing: 0.01em;
+}
+
+.whatsapp-enquiry-btn:hover {
+  background: linear-gradient(135deg, #0e7a6e, #1db954);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(37, 211, 102, 0.4);
 }
 
 .details-delivery-note {
@@ -6016,7 +6066,8 @@ main {
 
 /* ── CTA Buttons ─────────────────────────────────────────────────────────── */
 .pdp-cta-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.8rem;
 }
 
@@ -6055,6 +6106,30 @@ main {
 .pdp-btn-buy:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 30px rgba(122, 31, 43, 0.45);
+}
+
+.pdp-btn-wa {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #128c7e, #25d366);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.pdp-btn-wa:hover {
+  background: linear-gradient(135deg, #0e7a6e, #1db954);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
 }
 
 /* ── Trust Badges ────────────────────────────────────────────────────────── */
@@ -6793,6 +6868,28 @@ main {
   box-shadow: 0 6px 20px rgba(122, 31, 43, 0.4);
 }
 
+.pdp-sticky-wa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #128c7e, #25d366);
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(37, 211, 102, 0.28);
+  transition: all 0.2s;
+}
+
+.pdp-sticky-wa:hover {
+  background: linear-gradient(135deg, #0e7a6e, #1db954);
+  transform: translateY(-1px);
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
 
 /* Tablet (≤900px) */
@@ -7174,4 +7271,29 @@ main {
   .auth-card {
     padding: 2.5rem 1.5rem;
   }
+}
+
+.cart-wa-enquiry-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0.82rem 1rem;
+  margin-top: 0.55rem;
+  background: linear-gradient(135deg, #128c7e, #25d366);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(37, 211, 102, 0.28);
+  transition: all 0.18s ease;
+  letter-spacing: 0.01em;
+}
+
+.cart-wa-enquiry-btn:hover {
+  background: linear-gradient(135deg, #0e7a6e, #1db954);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(37, 211, 102, 0.4);
 }

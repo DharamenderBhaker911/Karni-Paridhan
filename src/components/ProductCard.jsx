@@ -41,9 +41,9 @@ function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
         <span className="pc__cat-pill">{product.category}</span>
 
         {discountPct === 75 && (
-           <span className="pc__sale-badge" style={{ position: 'absolute', top: '10px', left: '10px', background: '#d32f2f', color: 'white', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 'bold', borderRadius: '4px', zIndex: 2 }}>
-             SALE
-           </span>
+          <span className="pc__sale-badge" style={{ position: 'absolute', top: '10px', left: '10px', background: '#d32f2f', color: 'white', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 'bold', borderRadius: '4px', zIndex: 2 }}>
+            SALE
+          </span>
         )}
       </div>
 
@@ -85,7 +85,7 @@ function ProductCard({ product, onOpen, onAdd, onBuyNow }) {
             className="pc__btn pc__btn--cart"
             onClick={() => onAdd(product)}
           >
-            + Cart
+            Add to Cart
           </button>
           <button
             type="button"
