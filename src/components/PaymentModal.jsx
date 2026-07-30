@@ -340,6 +340,15 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
               <div className="pm-pay__gst-total"><span>Total Payable</span><span>₹{total.toFixed(2)}</span></div>
             </div>
 
+            {/* Delivery Time Badge */}
+            <div className="pm-pay__delivery-time">
+              <span className="pm-pay__delivery-time-icon">🚚</span>
+              <div className="pm-pay__delivery-time-info">
+                <span className="pm-pay__delivery-time-label">Expected Delivery</span>
+                <span className="pm-pay__delivery-time-value">5–7 Business Days</span>
+              </div>
+            </div>
+
             <div className="pm-pay__delivery-addr">
               <span>📍</span>
               <span>{form.name} · {form.address}, {form.city} – {form.pincode}</span>
@@ -348,7 +357,7 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
 
             <div className="pm-pay__wa-notify">
               <span>📲</span>
-              <span>Bill will be auto-sent to <strong>+91 {customerWa}</strong> after payment</span>
+              <span>Bill will be auto-sent to your WhatsApp number after payment</span>
             </div>
 
             <p className="pm-pay__scroll-hint">↓ Scroll to pay</p>
@@ -499,6 +508,12 @@ function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onS
                 {formErrors.pincode && <p className="pm-err">{formErrors.pincode}</p>}
               </div>
 
+
+              {/* Delivery Time Info in Address Step */}
+              <div className="pm-addr__delivery-notice">
+                <span>🚚</span>
+                <span>Expected Delivery: <strong>5–7 Business Days</strong> after payment</span>
+              </div>
 
               <button type="submit" className="pm-addr__submit">
                 Proceed to Payment →

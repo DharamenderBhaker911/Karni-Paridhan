@@ -3606,7 +3606,67 @@ main {
   padding-top: 0.35rem;
 }
 
+
+/* ── Delivery Time Badge (Payment Screen) ─── */
+.pm-pay__delivery-time {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #e8faf0 0%, #d1f5e0 100%);
+  border: 1.5px solid #6ee7a0;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.65rem;
+  animation: fadeInUp 0.4s ease;
+}
+
+.pm-pay__delivery-time-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.pm-pay__delivery-time-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.pm-pay__delivery-time-label {
+  font-size: 0.68rem;
+  color: #166534;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pm-pay__delivery-time-value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #15803d;
+}
+
+/* ── Address Step Delivery Notice ─── */
+.pm-addr__delivery-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #fffbeb;
+  border: 1.5px solid #fcd34d;
+  border-radius: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 1rem;
+  font-size: 0.78rem;
+  color: #92400e;
+  font-weight: 500;
+}
+
+.pm-addr__delivery-notice span:first-child {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
 .pm-pay__delivery-addr {
+
   display: flex;
   align-items: flex-start;
   gap: 0.4rem;
