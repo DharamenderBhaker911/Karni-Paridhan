@@ -7462,3 +7462,558 @@ main {
     height: 24px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   OFFER BANNER SECTION  (obs-*)
+   Premium animated slider with ticker, countdown, shimmer & particles
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Root wrapper ─────────────────────────────────────────────────────────── */
+.obs-root {
+  position: relative;
+  overflow: hidden;
+  background: #0a0008;
+  margin: 0;
+  user-select: none;
+}
+
+/* ── Ticker bar ───────────────────────────────────────────────────────────── */
+.obs-ticker {
+  background: linear-gradient(90deg, var(--gold-deep, #b8820a) 0%, var(--gold, #c49a3c) 50%, var(--gold-deep, #b8820a) 100%);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.obs-ticker__track {
+  display: inline-flex;
+  gap: 0;
+  animation: obs-ticker-scroll 40s linear infinite;
+}
+
+.obs-ticker__item {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1a0a00;
+  padding: 0 2.5rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.obs-ticker__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* Tag & eyebrow icon alignment */
+.obs-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.obs-tag__icon,
+.obs-eyebrow__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.obs-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* CTA icon alignment */
+.obs-cta__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+@keyframes obs-ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Main Slide ───────────────────────────────────────────────────────────── */
+.obs-slide {
+  position: relative;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: 2.5rem 4rem;
+}
+
+/* Slide entrance / exit animations */
+.obs-slide--in {
+  animation: obs-slide-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.obs-slide--out-left {
+  animation: obs-slide-out-left 0.38s cubic-bezier(0.4, 0, 1, 1) both;
+}
+.obs-slide--out-right {
+  animation: obs-slide-out-right 0.38s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes obs-slide-in {
+  from { opacity: 0; transform: translateX(60px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0)    scale(1);    }
+}
+@keyframes obs-slide-out-left {
+  from { opacity: 1; transform: translateX(0)    scale(1);    }
+  to   { opacity: 0; transform: translateX(-60px) scale(0.97); }
+}
+@keyframes obs-slide-out-right {
+  from { opacity: 1; transform: translateX(0)   scale(1);    }
+  to   { opacity: 0; transform: translateX(60px) scale(0.97); }
+}
+
+/* ── Decorative orbs ─────────────────────────────────────────────────────── */
+.obs-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+}
+.obs-orb-1 {
+  width: 400px;
+  height: 400px;
+  top: -120px;
+  left: -100px;
+  animation: obs-orb-drift 8s ease-in-out infinite alternate;
+}
+.obs-orb-2 {
+  width: 320px;
+  height: 320px;
+  bottom: -100px;
+  right: 60px;
+  animation: obs-orb-drift 10s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes obs-orb-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, 20px) scale(1.1); }
+}
+
+/* ── Shimmer sweep ───────────────────────────────────────────────────────── */
+.obs-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,255,255,0.06) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: obs-shimmer-sweep 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes obs-shimmer-sweep {
+  0%   { background-position: -100% 0; }
+  100% { background-position: 200%  0; }
+}
+
+/* ── Floating particles ──────────────────────────────────────────────────── */
+.obs-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(196, 154, 60, 0.55);
+  pointer-events: none;
+}
+.obs-particle--1 { top: 15%; left: 12%;  animation: obs-float 5s 0.0s ease-in-out infinite alternate; }
+.obs-particle--2 { top: 70%; left: 25%;  animation: obs-float 6s 0.8s ease-in-out infinite alternate; width: 4px; height: 4px; }
+.obs-particle--3 { top: 30%; right: 18%; animation: obs-float 7s 0.3s ease-in-out infinite alternate; width: 8px; height: 8px; background: rgba(232,192,186,0.45); }
+.obs-particle--4 { top: 75%; right: 35%; animation: obs-float 5s 1.2s ease-in-out infinite alternate; }
+.obs-particle--5 { top: 45%; left: 42%;  animation: obs-float 6.5s 0.5s ease-in-out infinite alternate; width: 5px; height: 5px; background: rgba(255,255,255,0.25); }
+.obs-particle--6 { top: 20%; right: 45%; animation: obs-float 5.5s 1.8s ease-in-out infinite alternate; width: 4px; height: 4px; }
+
+@keyframes obs-float {
+  from { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+  to   { transform: translateY(-18px) rotate(180deg); opacity: 1; }
+}
+
+/* ── Inner layout ────────────────────────────────────────────────────────── */
+.obs-slide__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Left content ────────────────────────────────────────────────────────── */
+.obs-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.obs-tag {
+  display: inline-block;
+  background: rgba(196,154,60,0.18);
+  border: 1px solid rgba(196,154,60,0.4);
+  color: var(--gold-light, #e4c06e);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-radius: 100px;
+  margin-bottom: 0.6rem;
+  backdrop-filter: blur(8px);
+  animation: obs-tag-pulse 3s ease-in-out infinite;
+}
+
+@keyframes obs-tag-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196,154,60,0.3); }
+  50%       { box-shadow: 0 0 0 6px rgba(196,154,60,0); }
+}
+
+.obs-eyebrow {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.obs-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.8rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+  animation: obs-headline-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes obs-headline-glow {
+  from { text-shadow: 0 2px 20px rgba(0,0,0,0.4), 0 0 0 transparent; }
+  to   { text-shadow: 0 2px 20px rgba(0,0,0,0.4), 0 0 30px rgba(196,154,60,0.3); }
+}
+
+.obs-sub {
+  color: rgba(255,255,255,0.72);
+  font-size: 0.88rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+  max-width: 320px;
+}
+
+.obs-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--gold, #c49a3c) 0%, #e8b84b 100%);
+  color: #1a0900;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.4rem;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.22s ease,
+              filter 0.22s ease;
+  box-shadow: 0 6px 24px rgba(196,154,60,0.45), 0 2px 8px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.obs-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.3) 55%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.obs-cta:hover {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 12px 36px rgba(196,154,60,0.6), 0 4px 12px rgba(0,0,0,0.25);
+  filter: brightness(1.08);
+}
+
+.obs-cta:hover::before {
+  transform: translateX(200%);
+}
+
+/* ── Center badge ────────────────────────────────────────────────────────── */
+.obs-badge-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obs-badge {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  background: linear-gradient(135deg, var(--gold,#c49a3c) 0%, #e8c46a 50%, #b8820a 100%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 0 4px rgba(196,154,60,0.35),
+    0 0 40px rgba(196,154,60,0.5),
+    0 8px 32px rgba(0,0,0,0.35);
+  animation: obs-badge-spin-float 6s ease-in-out infinite;
+}
+
+@keyframes obs-badge-spin-float {
+  0%   { transform: translateY(0)    rotate(-2deg); }
+  50%  { transform: translateY(-10px) rotate(2deg); }
+  100% { transform: translateY(0)    rotate(-2deg); }
+}
+
+.obs-badge__pct {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #1a0900;
+  line-height: 1;
+}
+
+.obs-badge__off {
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #1a0900;
+  text-transform: uppercase;
+}
+
+/* Rotating rings */
+.obs-badge__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px dashed rgba(196,154,60,0.4);
+  pointer-events: none;
+}
+.obs-badge__ring-1 {
+  inset: -14px;
+  animation: obs-ring-spin 8s linear infinite;
+}
+.obs-badge__ring-2 {
+  inset: -26px;
+  border-color: rgba(196,154,60,0.2);
+  animation: obs-ring-spin 14s linear infinite reverse;
+}
+
+@keyframes obs-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Timer ───────────────────────────────────────────────────────────────── */
+.obs-timer-wrap {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.obs-timer-label {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.obs-timer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(196,154,60,0.3);
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.obs-timer-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 40px;
+}
+
+.obs-timer-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gold-light, #e4c06e);
+  line-height: 1;
+  animation: obs-num-tick 1s ease-in-out;
+  display: block;
+  text-shadow: 0 0 18px rgba(196,154,60,0.5);
+}
+
+.obs-timer-sub {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-top: 2px;
+}
+
+.obs-timer-sep {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold, #c49a3c);
+  line-height: 1;
+  margin-bottom: 8px;
+  animation: obs-sep-blink 1s ease-in-out infinite;
+}
+
+@keyframes obs-sep-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.obs-timer-note {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.62rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Prev / Next arrows ──────────────────────────────────────────────────── */
+.obs-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  backdrop-filter: blur(8px);
+}
+
+.obs-arrow--prev { left: 12px; }
+.obs-arrow--next { right: 12px; }
+
+.obs-arrow:hover {
+  background: rgba(196,154,60,0.55);
+  border-color: var(--gold, #c49a3c);
+  box-shadow: 0 4px 16px rgba(196,154,60,0.5);
+  transform: translateY(-50%) scale(1.12);
+}
+
+/* ── Dot indicators ──────────────────────────────────────────────────────── */
+.obs-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 0 8px;
+  background: rgba(0,0,0,0.5);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.obs-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.25s, width 0.25s;
+}
+
+.obs-dot--active {
+  background: var(--gold, #c49a3c);
+  width: 24px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(196,154,60,0.6);
+  transform: scale(1.1);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .obs-slide { padding: 2rem 3rem; min-height: 200px; }
+  .obs-badge  { width: 100px; height: 100px; }
+  .obs-badge__pct { font-size: 1.7rem; }
+  .obs-timer-num  { font-size: 1.3rem; }
+  .obs-timer-unit { min-width: 34px; }
+}
+
+@media (max-width: 680px) {
+  .obs-slide {
+    padding: 1.6rem 2.5rem;
+    min-height: auto;
+  }
+
+  .obs-slide__inner {
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .obs-content { order: 1; width: 100%; }
+  .obs-sub { max-width: 100%; }
+
+  .obs-badge-wrap { order: 2; }
+  .obs-badge { width: 90px; height: 90px; }
+  .obs-badge__pct { font-size: 1.5rem; }
+
+  .obs-timer-wrap { order: 3; width: 100%; }
+  .obs-timer { justify-content: center; }
+
+  .obs-arrow { width: 28px; height: 28px; font-size: 1.1rem; }
+  .obs-arrow--prev { left: 4px; }
+  .obs-arrow--next { right: 4px; }
+
+  .obs-headline { font-size: clamp(1.3rem, 5vw, 1.8rem); }
+}
+
+@media (max-width: 420px) {
+  .obs-ticker__item { font-size: 0.62rem; padding: 0 1.5rem; }
+  .obs-slide { padding: 1.2rem 2rem; }
+  .obs-badge { width: 78px; height: 78px; }
+  .obs-badge__pct { font-size: 1.3rem; }
+  .obs-badge__ring-1 { inset: -10px; }
+  .obs-badge__ring-2 { inset: -18px; }
+  .obs-timer-num { font-size: 1.1rem; }
+  .obs-timer-unit { min-width: 28px; }
+}
