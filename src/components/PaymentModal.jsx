@@ -13,7 +13,6 @@ const paytmLogo = "https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Log
 const gpayLogo = "https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg";
 const phonepeLogo = "https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg";
 
-// Steps: address → payment → sending → success
 function PaymentModal({ subtotal, productName, selectedSize, items, onClose, onSuccess }) {
   const [step, setStep] = useState("address");
   const [sameAsPhone, setSameAs] = useState(true);
