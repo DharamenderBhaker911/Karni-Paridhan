@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
 import PaymentModal from "./PaymentModal";
+import WhatsAppFloat from "./WhatsAppFloat";
 
 
 
@@ -189,6 +190,9 @@ function CartDrawer() {
           onSuccess={handlePaymentSuccess}
         />
       )}
+
+      {/* Floating WhatsApp — hide when payment/address modal is open */}
+      <WhatsAppFloat hidden={showPayment} />
     </>
   );
 }

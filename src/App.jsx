@@ -15,6 +15,7 @@ import CartDrawer from "./components/CartDrawer";
 import Footer from "./components/Footer";
 import PaymentModal from "./components/PaymentModal";
 import SalePopup from "./components/SalePopup";
+import WhatsAppFloat from "./components/WhatsAppFloat";
 
 
 import OfferBannerSection from "./components/OfferBannerSection";
@@ -110,6 +111,9 @@ function StoreFront() {
       {showSalePopup && (
         <SalePopup onClose={() => setShowSalePopup(false)} />
       )}
+
+      {/* Floating WhatsApp — visible during shopping, hidden when payment modal is open */}
+      <WhatsAppFloat hidden={!!directBuyProduct} />
     </main>
   );
 }
